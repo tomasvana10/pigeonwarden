@@ -1,0 +1,8 @@
+__pycache__
+venv
+/datasets
+/runs
+yolo11n.pt
+.mypy-cache/
+.ruff-cache/
+.pytest-cache/
