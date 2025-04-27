@@ -6,9 +6,9 @@ from ..constants import TEST_IMGS_PATH
 from ..utils import get_latest_trained_model
 
 
-def test_all() -> None:    
+def test_all() -> None:
     model = YOLO(model=get_latest_trained_model())
-    
+
     errors: list[str] = []
     for img in os.listdir(TEST_IMGS_PATH):
         expected = int(img.split("-")[0])
@@ -20,7 +20,7 @@ def test_all() -> None:
     if errors:
         raise AssertionError("Test failures:\n" + "\n".join(errors))
 
-    print("Tests passed.")
+    print("All tests passed.")
 
 
 __all__ = ["test_all"]

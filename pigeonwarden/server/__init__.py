@@ -1,23 +1,55 @@
-import socket as s
-import sys
+from flask import Flask, render_template, Response
 
-port = 6969
+from ..model import load_dataset, train_model
+from ..test import test_all
+from .. import is_port_in_use, get_available_port
+
+
+PORT = 6969
+
+srv = Flask(__name__)
+srv.config["TEMPLATES_AUTO_RELOAD"] = True
+
+
+@srv.route("/")
+def index() -> str:
+    return render_template("index.html")
+
+
+@srv.route("/api/load-dataset")
+def _load_dataset() -> Response:
+    try:
+        load_dataset()
+    except FileExistsError:
+        return Response(response="The dataset has already been installed.", status=500)
+
+    return Response(response="Successfully installed dataset.", status=200)
+
+
+@srv.route("/api/train-model")
+def _train_model() -> Response:
+    try:
+        train_model()
+    except AssertionError as ex:
+        return Response(response=str(ex), status=500)
+
+    return Response(response="Successfully trained a new iteration of this model.", status=200)
+
+@srv.route("/api/test-model")
+def _test_model() -> Response:
+    try:
+        test_all()
+    except AssertionError as ex:
+        return Response(response=str(ex), status=500)
+
+    return Response(response="All tests passed.", status=200)    
 
 
 def start_server() -> None:
-    with s.socket(s.AF_INET, s.SOCK_STREAM) as sock:
-        sock.bind(("", port))
-        sock.listen(1)
-
-        print(
-            f"Running server on port {port} (http://127.0.0.1:{port}). Use CTRL+C to stop."
-        )
-
-        while True:
-            conn, addr = sock.accept()
-
-        sock.close()
-        sys.exit()
+    if not is_port_in_use(PORT):
+        srv.run(port=PORT)
+    else:
+        srv.run(port=get_available_port())
 
 
 __all__ = ["start_server"]
