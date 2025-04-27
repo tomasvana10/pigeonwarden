@@ -1,5 +1,5 @@
 # pigeonwarden
-Detect and scares pigeons
+Detect and scare pigeons
 
 ---
 
