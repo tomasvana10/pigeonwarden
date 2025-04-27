@@ -3,8 +3,8 @@ from ultralytics import YOLO
 from ..constants import DATA_PATH
 
 
-EPOCHS = 10
-PATIENCE = 5
+EPOCHS = 350
+PATIENCE = 50
 
 
 def train_model() -> None:

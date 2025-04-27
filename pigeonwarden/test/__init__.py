@@ -14,6 +14,7 @@ def test_all() -> None:
         expected = int(img.split("-")[0])
         results = model.predict(TEST_IMGS_PATH / img)
         actual = len(results[0].boxes)
+        results[0].save(img)
         if expected != actual:
             errors.append(f"Image {img} has {actual} boxes, expected {expected}")
 
