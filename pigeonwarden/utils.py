@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-from . import DETECT_PATH
+from .constants import DETECT_PATH
 
 
 def get_latest_trained_model() -> Path:

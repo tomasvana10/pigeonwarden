@@ -1,12 +1,14 @@
 import os
+
 from ultralytics import YOLO
+
 from ..constants import TEST_IMGS_PATH
 from ..utils import get_latest_trained_model
 
-model = YOLO(model=get_latest_trained_model())
 
-
-def test_all() -> None:
+def test_all() -> None:    
+    model = YOLO(model=get_latest_trained_model())
+    
     errors: list[str] = []
     for img in os.listdir(TEST_IMGS_PATH):
         expected = int(img.split("-")[0])

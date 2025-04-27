@@ -1,6 +1,6 @@
 from ultralytics import YOLO
 
-from .. import DATA_PATH
+from ..constants import DATA_PATH
 
 EPOCHS = 10
 PATIENCE = 5
