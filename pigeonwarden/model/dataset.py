@@ -10,7 +10,7 @@ from ..constants import DATASET_PATH, DATASET_URL
 def load_dataset() -> None:
     os.makedirs(DATASET_PATH.parent)
     zip_path = DATASET_PATH.with_suffix(".zip")
-    temp_extract = os.path.join(DATASET_PATH.parent, "temp_extract")
+    temp_extract = os.path.join(DATASET_PATH.parent, "temp_extract") 
     final_dest = os.path.join(DATASET_PATH)
 
     req = requests.get(DATASET_URL, stream=True)
