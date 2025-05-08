@@ -2,11 +2,13 @@ import os
 from pathlib import Path
 import socket as s
 
+from ultralytics import YOLO
+
 from .constants import DETECT_PATH
 
 
-def get_latest_trained_model() -> Path:
-    assert Path(DETECT_PATH).exists(), "Please train the model before testing."
+def get_latest_trained_model(source_ncnn=True) -> Path:
+    assert Path(DETECT_PATH).exists(), "You must run pigeonwarden with the `train` parameter first."
     
     trained = os.listdir(DETECT_PATH)
 
@@ -19,7 +21,17 @@ def get_latest_trained_model() -> Path:
 
     trained.sort(key=sort_fn, reverse=True)
 
-    return DETECT_PATH / trained[0] / "weights" / "best.pt"
+    model = "best_ncnn_model" if source_ncnn else "best.pt"
+
+    return DETECT_PATH / trained[0] / "weights" / model
+
+
+def export_ncnn():
+    if get_latest_trained_model().exists():
+        raise Exception("NCNN Model already exported")
+    
+    model = YOLO(get_latest_trained_model(source_ncnn=False))
+    model.export(format="ncnn")
 
 
 def is_port_in_use(port: int) -> bool:

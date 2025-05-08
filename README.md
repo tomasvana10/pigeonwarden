@@ -14,11 +14,10 @@ Pytorch install reference (for me) - `pytorch install - pip3 install torch torch
 ---
 
 ## Usage
-1. [Install pytorch](https://pytorch.org/get-started/locally/)
-2. `pip install -r requirements.txt`
-3. `python -m pigeonwarden dataset` - Install pigeon dataset
-4. `python -m pigeonwarden train` - Train model
-5. `python -m pigeonwarden infer` - Begin pigeon inference (not yet implemented)
+1. `pip install -r requirements.txt`
+2. `python -m pigeonwarden dataset` - Install pigeon dataset
+3. `python -m pigeonwarden train` - Train model
+4. `python -m pigeonwarden infer` - Begin pigeon inference (not yet implemented)
 
 ## Testing
 Run `python -m pigeonwarden test`. You can modify the images you wish to test by adding them in `pigeonwarden/test-images` in the form `<expected-pigeon-count>-<counter-from-0>.<suffix>` (e.g. `1-0.png`, `1-1.png`, `2-0.png`).
@@ -28,3 +27,6 @@ Run `python -m pigeonwarden test`. You can modify the images you wish to test by
 - USB Speaker
 - USB Camera
 
+
+https://github.com/AsamK/signal-cli
+https://medium.com/@dogukanakkaya/how-to-send-signal-messages-with-signal-cli-21f6fa1c7d58

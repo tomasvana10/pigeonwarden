@@ -7,7 +7,10 @@ from ..utils import get_latest_trained_model
 
 
 def test_all() -> None:
-    model = YOLO(model=get_latest_trained_model())
+    try:
+        model = YOLO(model=get_latest_trained_model())
+    except FileNotFoundError:
+        raise Exception("You must run pigeonwarden with the `ncnn` parameter first.")
 
     errors: list[str] = []
     for img in os.listdir(TEST_IMGS_PATH):

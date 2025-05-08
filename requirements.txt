@@ -1,3 +1,4 @@
 ultralytics
 requests
 flask
+python-vlc
