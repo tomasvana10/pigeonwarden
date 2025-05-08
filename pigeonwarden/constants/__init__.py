@@ -6,6 +6,7 @@ from .paths import (
     DETECT_PATH,
     RUNS_PATH,
     TEST_IMGS_PATH,
+    ASSETS_PATH,
 )
 
 __all__ = [
@@ -16,4 +17,5 @@ __all__ = [
     "DATA_PATH",
     "TEST_IMGS_PATH",
     "DATASET_URL",
+    "ASSETS_PATH",
 ]

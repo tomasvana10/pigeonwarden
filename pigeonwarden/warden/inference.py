@@ -1,7 +1,13 @@
 from picamera2 import Picamera2
 from ultralytics import YOLO
+import cv2
 
 from ..utils import get_latest_trained_model
+from .speaker import play_sound
+
+MIN_CONFIDENCE = 0.85
+LABELS = ["common-mynas", "pigeons"]
+
 
 def infer():
     picam2 = Picamera2()
@@ -13,8 +19,12 @@ def infer():
 
     model = YOLO(model=get_latest_trained_model())
 
-    frame = picam2.capture_array()
+    frame = cv2.cvtColor(picam2.capture_array(), cv2.COLOR_RGB2BGR)
     results = model.predict(frame)
 
-    print(results)
+    results[0].save() # remove later
+
+    if any(found["name"] in LABELS and found["confidence"] > MIN_CONFIDENCE for found in results[0].summary()):
+        play_sound("airhorn.mp3", 150)
+        
     #cv2.imwrite("test.jpg", cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))

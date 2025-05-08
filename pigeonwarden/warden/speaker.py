@@ -1,11 +1,14 @@
-import vlc
 import threading
 import time
+
+import vlc
+
+from ..constants import ASSETS_PATH 
 
 
 def _play_sound(soundfile: str, vol: int) -> None:
     instance = vlc.Instance('--aout=alsa')
-    media = instance.media_new(soundfile)
+    media = instance.media_new(ASSETS_PATH / soundfile)
     player = instance.media_player_new()
     player.set_media(media)
     player.audio_set_volume(vol)
