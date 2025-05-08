@@ -5,7 +5,7 @@ import cv2
 from ..utils import get_latest_trained_model
 from .speaker import play_sound
 
-MIN_CONFIDENCE = 0.85
+MIN_CONFIDENCE = 0.825
 LABELS = ["common-mynas", "pigeons"]
 
 
