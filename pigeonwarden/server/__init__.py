@@ -47,9 +47,9 @@ def _test_model() -> Response:
 
 def start_server() -> None:
     if not is_port_in_use(PORT):
-        srv.run(port=PORT)
+        srv.run(host="0.0.0.0", port=PORT)
     else:
-        srv.run(port=get_available_port())
+        srv.run(host="0.0.0.0", port=get_available_port())
 
 
 __all__ = ["start_server"]
