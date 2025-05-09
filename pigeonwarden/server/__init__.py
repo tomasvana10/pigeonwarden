@@ -1,12 +1,11 @@
-from flask import Flask, render_template, Response
-from ultralytics import YOLO
-from picamera2 import Picamera2
+import time
+
+from flask import Flask, render_template, Response, stream_with_context
 
 from ..model import load_dataset, train_model
 from ..test import test_all
 from .. import is_port_in_use, get_available_port
-from ..warden import infer
-from ..utils import get_latest_trained_model, configure_cam
+from ..warden import Warden
 
 PORT = 6969
 
@@ -49,18 +48,22 @@ def _test_model() -> Response:
     return Response(response="All tests passed.", status=200)    
 
 
-@srv.route("/api/frame")
-def get_frame():
-    result = infer(model, picam2)
-    return Response(result["framebytes"], mimetype="image/jpeg")
+@srv.route("/api/stream")
+def stream():
+    def generate():
+        while True:
+            result = warden.infer()
+            yield (b"--frame\r\n"
+                   b"Content-Type: image/jpeg\r\n\r\n" +
+                   result["framebytes"] + b"\r\n")
+            time.sleep(1)
+
+    return Response(stream_with_context(generate()), mimetype="multipart/x-mixed-replace; boundary=frame")
 
 
 def start_server() -> None:
-    global model, picam2
-    model = YOLO(model=get_latest_trained_model())
-    picam2 = Picamera2()
-    configure_cam(picam2)
-    picam2.start()
+    global warden 
+    warden = Warden()    
     
     if not is_port_in_use(PORT):
         srv.run(host="0.0.0.0", port=PORT)

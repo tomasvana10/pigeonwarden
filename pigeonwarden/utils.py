@@ -8,6 +8,17 @@ from picamera2 import Picamera2
 from .constants import DETECT_PATH
 
 
+class Singleton(type):
+    _instances = {}
+    
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        else:
+            cls._instances[cls].__init__(*args, **kwargs)
+        return cls._instances[cls]
+
+
 def get_latest_trained_model(source_ncnn=True) -> Path:
     assert Path(DETECT_PATH).exists(), "You must run pigeonwarden with the `train` parameter first."
     
