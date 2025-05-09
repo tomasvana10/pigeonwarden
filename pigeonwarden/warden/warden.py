@@ -54,13 +54,14 @@ class Warden(metaclass=Singleton):
 
     def infer(self) -> dict[str, bool | bytes]:
         frame = cv2.cvtColor(self.picam2.capture_array(), cv2.COLOR_RGB2BGR)
-        results = self.model.predict(frame)
-        _, encoded = cv2.imencode(self.__class__.ENCODING, results[0].plot())
+        results = self.model.predict(frame, stream=True, verbose=False)
+        result = next(results)
+        _, encoded = cv2.imencode(self.__class__.ENCODING, result.plot())
         framebytes = encoded.tobytes()
 
         if any(
             found["name"] in self.labels and found["confidence"] > self.min_confidence
-            for found in results[0].summary()
+            for found in result.summary()
         ):
             now = time.time()
             if now - self.most_recent_detection >= self.alert_cooldown_seconds:

@@ -1,5 +1,5 @@
-import threading
 import time
+from threading import Thread, Event
 
 import vlc
 
@@ -8,12 +8,12 @@ from ..constants import ASSETS_PATH
 
 def _play_sound(soundfile: str, vol: int) -> None:
     instance = vlc.Instance("--aout=alsa")
-    media = instance.media_new(ASSETS_PATH / soundfile)
+    media = instance.media_new(ASSETS_PATH / "sound" / soundfile)
     player = instance.media_player_new()
     player.set_media(media)
     player.audio_set_volume(vol)
 
-    parsed_event = threading.Event()
+    parsed_event = Event()
 
     def on_parsed(event):
         parsed_event.set()
@@ -24,11 +24,10 @@ def _play_sound(soundfile: str, vol: int) -> None:
     parsed_event.wait(timeout=1)
 
     duration = media.get_duration() / 1000
-    print(f"Duration: {duration} seconds")
 
     player.play()
     time.sleep(duration)
 
 
 def play_sound(soundfile: str, vol: int) -> None:
-    threading.Thread(target=lambda: _play_sound(soundfile, vol)).start()
+    Thread(target=lambda: _play_sound(soundfile, vol)).start()

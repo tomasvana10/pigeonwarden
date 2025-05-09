@@ -8,18 +8,19 @@ from ..model import load_dataset, train_model
 from ..test import test_all
 from ..warden import Warden
 
+
 PORT = 6969
 
-srv = Flask(__name__)
-srv.config["TEMPLATES_AUTO_RELOAD"] = True
+app = Flask(__name__)
+app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 
-@srv.route("/")
+@app.route("/")
 def index() -> str:
     return render_template("index.html")
 
 
-@srv.route("/api/load-dataset")
+@app.route("/api/load-dataset")
 def _load_dataset() -> Response:
     try:
         load_dataset()
@@ -29,7 +30,7 @@ def _load_dataset() -> Response:
     return Response(response="Successfully installed dataset.", status=200)
 
 
-@srv.route("/api/train-model")
+@app.route("/api/train-model")
 def _train_model() -> Response:
     try:
         train_model()
@@ -41,7 +42,7 @@ def _train_model() -> Response:
     )
 
 
-@srv.route("/api/test-model")
+@app.route("/api/test-model")
 def _test_model() -> Response:
     try:
         test_all()
@@ -51,7 +52,7 @@ def _test_model() -> Response:
     return Response(response="All tests passed.", status=200)
 
 
-@srv.route("/api/stream")
+@app.route("/api/stream")
 def stream() -> Response:
     def generate() -> Iterator[bytes]:
         while True:
@@ -75,9 +76,9 @@ def start_server() -> None:
     warden.start_infer_loop_thread(warden)  # type: ignore
 
     if not is_port_in_use(PORT):
-        srv.run(host="0.0.0.0", port=PORT)
+        app.run(host="0.0.0.0", port=PORT)
     else:
-        srv.run(host="0.0.0.0", port=get_available_port())
+        app.run(host="0.0.0.0", port=get_available_port())
 
 
 __all__ = ["start_server"]

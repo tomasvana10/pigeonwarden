@@ -1,6 +1,6 @@
 from ultralytics import YOLO
 
-from ..constants import DATA_PATH
+from ..constants import DATASET_PATH
 
 EPOCHS = 10
 PATIENCE = 5
@@ -8,7 +8,8 @@ PATIENCE = 5
 
 def train_model() -> None:
     model = YOLO("yolo11n.pt")
+    path = DATASET_PATH / "data.yaml"
 
-    assert DATA_PATH.exists(), "Please install the dataset before training."
+    assert path.exists(), "Please install the dataset before training."
 
-    model.train(data=DATA_PATH, epochs=EPOCHS, patience=PATIENCE)
+    model.train(data=path, epochs=EPOCHS, patience=PATIENCE)
