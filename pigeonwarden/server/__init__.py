@@ -1,9 +1,12 @@
 from flask import Flask, render_template, Response
+from ultralytics import YOLO
+from picamera2 import Picamera2
 
 from ..model import load_dataset, train_model
 from ..test import test_all
 from .. import is_port_in_use, get_available_port
 from ..warden import infer
+from ..utils import get_latest_trained_model
 
 PORT = 6969
 
@@ -48,11 +51,16 @@ def _test_model() -> Response:
 
 @srv.route("/api/frame")
 def get_frame():
-    result = infer()
+    result = infer(model, picam2)
     return Response(result["framebytes"], mimetype="image/jpeg")
 
 
 def start_server() -> None:
+    global model, picam2
+    model = YOLO(model=get_latest_trained_model())
+    picam2 = Picamera2()
+    picam2.start()
+    
     if not is_port_in_use(PORT):
         srv.run(host="0.0.0.0", port=PORT)
     else:

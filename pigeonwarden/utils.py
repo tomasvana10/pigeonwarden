@@ -3,6 +3,7 @@ from pathlib import Path
 import socket as s
 
 from ultralytics import YOLO
+from picamera2 import Picamera2
 
 from .constants import DETECT_PATH
 
@@ -44,3 +45,10 @@ def get_available_port() -> int:
     sock.bind(("", 0))
     port: int = sock.getsockname()[1]
     return port
+
+
+def configure_cam(picam2: Picamera2):
+    picam2.preview_configuration.main.size = (1920, 1080)
+    picam2.preview_configuration.main.format = "RGB888"
+    picam2.preview_configuration.align()
+    picam2.configure("preview")
