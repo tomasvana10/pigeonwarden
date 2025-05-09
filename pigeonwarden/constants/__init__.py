@@ -1,12 +1,12 @@
 from .other import DATASET_URL
 from .paths import (
+    ASSETS_PATH,
     BASE_PATH,
     DATA_PATH,
     DATASET_PATH,
     DETECT_PATH,
     RUNS_PATH,
     TEST_IMGS_PATH,
-    ASSETS_PATH,
 )
 
 __all__ = [

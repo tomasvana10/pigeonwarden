@@ -1,10 +1,11 @@
 import time
+from typing import Iterator
 
-from flask import Flask, render_template, Response, stream_with_context
+from flask import Flask, Response, render_template, stream_with_context
 
+from .. import get_available_port, is_port_in_use
 from ..model import load_dataset, train_model
 from ..test import test_all
-from .. import is_port_in_use, get_available_port
 from ..warden import Warden
 
 PORT = 6969
@@ -35,7 +36,9 @@ def _train_model() -> Response:
     except AssertionError as ex:
         return Response(response=str(ex), status=500)
 
-    return Response(response="Successfully trained a new iteration of this model.", status=200)
+    return Response(
+        response="Successfully trained a new iteration of this model.", status=200
+    )
 
 
 @srv.route("/api/test-model")
@@ -45,31 +48,32 @@ def _test_model() -> Response:
     except AssertionError as ex:
         return Response(response=str(ex), status=500)
 
-    return Response(response="All tests passed.", status=200)    
+    return Response(response="All tests passed.", status=200)
 
 
 @srv.route("/api/stream")
-def stream():
-    def generate():
+def stream() -> Response:
+    def generate() -> Iterator[bytes]:
         while True:
             with warden.lock:
                 frame = warden.current_frame
-            
+
             if frame:
-                yield (b"--frame\r\n"
-                    b"Content-Type: image/jpeg\r\n\r\n" +
-                    frame + b"\r\n")
-            
+                yield (b"--frame\r\nContent-Type: image/jpeg\r\n\r\n" + frame + b"\r\n")
+
             time.sleep(warden.sleep_time)
 
-    return Response(stream_with_context(generate()), mimetype="multipart/x-mixed-replace; boundary=frame")
+    return Response(
+        stream_with_context(generate()),
+        mimetype="multipart/x-mixed-replace; boundary=frame",
+    )
 
 
 def start_server() -> None:
-    global warden 
-    warden = Warden()    
-    warden.start_infer_loop_thread(warden)
-    
+    global warden
+    warden = Warden()  # type: ignore
+    warden.start_infer_loop_thread(warden)  # type: ignore
+
     if not is_port_in_use(PORT):
         srv.run(host="0.0.0.0", port=PORT)
     else:

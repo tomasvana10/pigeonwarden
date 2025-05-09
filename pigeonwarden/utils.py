@@ -1,16 +1,17 @@
 import os
-from pathlib import Path
 import socket as s
+from pathlib import Path
+from typing import Any
 
-from ultralytics import YOLO
 from picamera2 import Picamera2
+from ultralytics import YOLO
 
 from .constants import DETECT_PATH
 
 
 class Singleton(type):
-    _instances = {}
-    
+    _instances: dict[type, Any] = {}
+
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
@@ -20,8 +21,10 @@ class Singleton(type):
 
 
 def get_latest_trained_model(source_ncnn=True) -> Path:
-    assert Path(DETECT_PATH).exists(), "You must run pigeonwarden with the `train` parameter first."
-    
+    assert Path(DETECT_PATH).exists(), (
+        "You must run pigeonwarden with the `train` parameter first."
+    )
+
     trained = os.listdir(DETECT_PATH)
 
     def sort_fn(t: str) -> int:
@@ -41,7 +44,7 @@ def get_latest_trained_model(source_ncnn=True) -> Path:
 def export_ncnn():
     if get_latest_trained_model().exists():
         raise Exception("NCNN Model already exported")
-    
+
     model = YOLO(get_latest_trained_model(source_ncnn=False))
     model.export(format="ncnn")
 

@@ -15,5 +15,5 @@ elif arg == "test":
     test_all()
 elif arg == "ncnn":
     export_ncnn()
-elif arg == "start-server":
+elif arg == "init":
     start_server()

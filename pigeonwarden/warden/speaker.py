@@ -3,11 +3,11 @@ import time
 
 import vlc
 
-from ..constants import ASSETS_PATH 
+from ..constants import ASSETS_PATH
 
 
 def _play_sound(soundfile: str, vol: int) -> None:
-    instance = vlc.Instance('--aout=alsa')
+    instance = vlc.Instance("--aout=alsa")
     media = instance.media_new(ASSETS_PATH / soundfile)
     player = instance.media_player_new()
     player.set_media(media)
@@ -18,10 +18,7 @@ def _play_sound(soundfile: str, vol: int) -> None:
     def on_parsed(event):
         parsed_event.set()
 
-    media.event_manager().event_attach(
-        vlc.EventType.MediaParsedChanged, 
-        on_parsed
-    )
+    media.event_manager().event_attach(vlc.EventType.MediaParsedChanged, on_parsed)
 
     media.parse_async()
     parsed_event.wait(timeout=1)
