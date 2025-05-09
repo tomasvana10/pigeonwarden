@@ -6,7 +6,7 @@ from ..model import load_dataset, train_model
 from ..test import test_all
 from .. import is_port_in_use, get_available_port
 from ..warden import infer
-from ..utils import get_latest_trained_model
+from ..utils import get_latest_trained_model, configure_cam
 
 PORT = 6969
 
@@ -59,6 +59,7 @@ def start_server() -> None:
     global model, picam2
     model = YOLO(model=get_latest_trained_model())
     picam2 = Picamera2()
+    configure_cam(picam2)
     picam2.start()
     
     if not is_port_in_use(PORT):

@@ -10,7 +10,7 @@ LABELS = ["common-mynas", "pigeons"]
 
 
 def infer(model: YOLO, picam2: Picamera2):
-    configure_cam(picam2)
+    # `picam2` must be pre-configured and initialised
     
     frame = cv2.cvtColor(picam2.capture_array(), cv2.COLOR_RGB2BGR)
     results = model.predict(frame)
