@@ -52,11 +52,15 @@ def _test_model() -> Response:
 def stream():
     def generate():
         while True:
-            result = warden.infer()
-            yield (b"--frame\r\n"
-                   b"Content-Type: image/jpeg\r\n\r\n" +
-                   result["framebytes"] + b"\r\n")
-            time.sleep(1)
+            with warden.lock:
+                frame = warden.current_frame
+            
+            if frame:
+                yield (b"--frame\r\n"
+                    b"Content-Type: image/jpeg\r\n\r\n" +
+                    frame + b"\r\n")
+            
+            time.sleep(warden.sleep_time)
 
     return Response(stream_with_context(generate()), mimetype="multipart/x-mixed-replace; boundary=frame")
 
@@ -64,6 +68,7 @@ def stream():
 def start_server() -> None:
     global warden 
     warden = Warden()    
+    warden.start_infer_loop_thread(warden)
     
     if not is_port_in_use(PORT):
         srv.run(host="0.0.0.0", port=PORT)
