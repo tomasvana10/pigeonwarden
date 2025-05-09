@@ -15,7 +15,11 @@
   };
   const loadDataset = async () => await fetch("/api/load-dataset");
   const trainModel = async () => await fetch("/api/train-model");
-  const testModel = async() => await fetch("/api/test-model")
+  const testModel = async () => await fetch("/api/test-model");
+  setInterval(() => {
+    const img = document.getElementById("cam");
+    img.src = `/api/frame?${Date.now()}`;
+  }, 1000)
 </script>
 
 <h1>Pigeon Warden Control Panel</h1>
@@ -28,3 +32,4 @@
 <button id="testModelButton" onclick="withOutputAlert(testModel, this.id)">
   Test Model
 </button>
+<img id="cam" width="640" height="360">

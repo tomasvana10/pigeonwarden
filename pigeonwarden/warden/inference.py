@@ -3,7 +3,7 @@ from ultralytics import YOLO
 import cv2
 
 from ..utils import get_latest_trained_model
-from .speaker import play_sound
+
 
 MIN_CONFIDENCE = 0.8
 LABELS = ["common-mynas", "pigeons"]
@@ -21,10 +21,11 @@ def infer():
 
     frame = cv2.cvtColor(picam2.capture_array(), cv2.COLOR_RGB2BGR)
     results = model.predict(frame)
-
-    results[0].save() # remove later
+    _, jpg = cv2.imencode(".jpg", results[0].plot())
+    framebytes = jpg.tobytes()
 
     if any(found["name"] in LABELS and found["confidence"] > MIN_CONFIDENCE for found in results[0].summary()):
-        play_sound("airhorn.mp3", 150)
+        return dict(found=True, framebytes=framebytes)
+    
+    return dict(found=False, framebytes=framebytes)
         
-    #cv2.imwrite("test.jpg", cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))

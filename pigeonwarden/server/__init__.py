@@ -3,7 +3,7 @@ from flask import Flask, render_template, Response
 from ..model import load_dataset, train_model
 from ..test import test_all
 from .. import is_port_in_use, get_available_port
-
+from ..warden import infer
 
 PORT = 6969
 
@@ -35,6 +35,7 @@ def _train_model() -> Response:
 
     return Response(response="Successfully trained a new iteration of this model.", status=200)
 
+
 @srv.route("/api/test-model")
 def _test_model() -> Response:
     try:
@@ -43,6 +44,12 @@ def _test_model() -> Response:
         return Response(response=str(ex), status=500)
 
     return Response(response="All tests passed.", status=200)    
+
+
+@srv.route("/api/frame")
+def get_frame():
+    result = infer()
+    return Response(result["framebytes"], mimetype="image/jpeg")
 
 
 def start_server() -> None:
