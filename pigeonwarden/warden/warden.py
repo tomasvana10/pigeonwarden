@@ -62,13 +62,12 @@ class Warden(metaclass=Singleton):
             self.internal_sleep_time + self.__class__.AVERAGE_INFERENCE_TIME
         )
         
-        self.lock = Lock()
-
         if self.telegram_alerts:
             load_dotenv(BASE_PATH / self.__class__.ENV)
             self.bot = Bot(token=os.getenv("BOT_TOKEN"))
             self.chat_id = int(os.getenv("CHAT_ID"))
 
+        self._lock = Lock()
         self._stop_flag = False
         self._inference_thread = None
 
@@ -94,7 +93,8 @@ class Warden(metaclass=Singleton):
         return dict(found=False, framebytes=framebytes)
 
     def is_inferring(self) -> bool:
-        return bool(self._inference_thread)
+        with self._lock:
+            return bool(self._inference_thread)
 
     def infer_loop(self) -> None:
         while not self._stop_flag:
@@ -103,7 +103,7 @@ class Warden(metaclass=Singleton):
             time.sleep(self.internal_sleep_time)
 
     def start_inference(self) -> None:
-        with self.lock:
+        with self._lock:
             assert self._inference_thread is None
 
             self._stop_flag = False
@@ -111,7 +111,7 @@ class Warden(metaclass=Singleton):
             self._inference_thread.start()
 
     def stop_inference(self) -> None:
-        with self.lock:
+        with self._lock:
             assert self._inference_thread is not None
 
             self._stop_flag = True
