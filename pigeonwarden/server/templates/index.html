@@ -5,6 +5,23 @@
   <title>Pigeon Warden</title>
 </head>
 
-
 <h1>Pigeon Warden Control Panel</h1>
+<button id="wardenTogglerButton">Warden ON</button>
+<label id="cpuTempLabel" for="cpuTempButton">Temp: NaN</label>
+<button id="cpuTempButton">Get CPU Temp</button>
 <img src="/api/stream" width="640" height="360">
+
+<script>
+  const wardenTogglerButton = document.getElementById("wardenTogglerButton")
+  wardenTogglerButton.onclick = async () => {
+    const text = await fetch("/api/toggle-inference").then((res) => res.text())
+    wardenTogglerButton.innerText = `Warden ${text === "1" ? "ON" : "OFF"}`
+  }
+
+  const cpuTempButton = document.getElementById("cpuTempButton")
+  const cpuTempLabel = document.getElementById("cpuTempLabel")
+  cpuTempButton.onclick = async () => {
+    const data = await fetch("/api/temp").then((res) => res.json())
+    cpuTempLabel.innerText = `Temp: ${data.temp}'${data.unit}`
+  }
+</script>

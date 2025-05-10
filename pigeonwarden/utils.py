@@ -1,5 +1,6 @@
 import os
 import socket as s
+import re
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -7,6 +8,9 @@ from typing import Any
 from ultralytics import YOLO
 
 from .constants import DETECT_PATH
+
+
+TEMPERATURE_REGEX = re.compile(r"(\d+\.\d+)'([CF])")
 
 
 class Singleton(type):
@@ -63,3 +67,8 @@ def get_available_port() -> int:
 
 def get_timestamp() -> str:
     return datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
+
+def get_cpu_temp() -> dict[str, float | str]:
+    results = re.findall(TEMPERATURE_REGEX, os.popen("vcgencmd measure_temp").read())[0]
+    return dict(temp=float(results[0]), unit=results[1])

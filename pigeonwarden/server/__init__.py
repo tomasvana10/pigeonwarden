@@ -1,9 +1,9 @@
 import time
 from typing import Iterator
 
-from flask import Flask, Response, render_template, stream_with_context
+from flask import Flask, Response, render_template, stream_with_context, jsonify
 
-from .. import get_available_port, is_port_in_use
+from .. import get_available_port, is_port_in_use, get_cpu_temp
 from ..warden import Warden
 
 PORT = 6969
@@ -49,6 +49,11 @@ def toggle_inference() -> Response:
 @app.route("/api/status")
 def status() -> Response:
     return Response("1" if warden.is_inferring() else "0", status=200)
+
+
+@app.route("/api/temp")
+def temp() -> Response:
+    return jsonify(**get_cpu_temp())
 
 
 def init_server() -> None:

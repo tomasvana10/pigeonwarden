@@ -13,6 +13,7 @@ from .utils import (
     get_latest_trained_model,
     get_timestamp,
     is_port_in_use,
+    get_cpu_temp
 )
 
 __all__ = [
@@ -22,6 +23,7 @@ __all__ = [
     "export_ncnn",
     "is_port_in_use",
     "get_timestamp",
+    "get_cpu_temp",
     "BASE_PATH",
     "DATASET_PATH",
     "RUNS_PATH",

@@ -1,7 +1,7 @@
 import asyncio
 import os
 import time
-from threading import Thread
+from threading import Thread, Lock
 
 import cv2
 from dotenv import load_dotenv
@@ -61,6 +61,8 @@ class Warden(metaclass=Singleton):
         self.external_sleep_time = (
             self.internal_sleep_time + self.__class__.AVERAGE_INFERENCE_TIME
         )
+        
+        self.lock = Lock()
 
         if self.telegram_alerts:
             load_dotenv(BASE_PATH / self.__class__.ENV)
@@ -101,18 +103,20 @@ class Warden(metaclass=Singleton):
             time.sleep(self.internal_sleep_time)
 
     def start_inference(self) -> None:
-        assert self._inference_thread is None
+        with self.lock:
+            assert self._inference_thread is None
 
-        self._stop_flag = False
-        self._inference_thread = Thread(target=self.infer_loop, daemon=True)
-        self._inference_thread.start()
+            self._stop_flag = False
+            self._inference_thread = Thread(target=self.infer_loop, daemon=True)
+            self._inference_thread.start()
 
     def stop_inference(self) -> None:
-        assert self._inference_thread is not None
+        with self.lock:
+            assert self._inference_thread is not None
 
-        self._stop_flag = True
-        self._inference_thread.join()
-        self._inference_thread = None
+            self._stop_flag = True
+            self._inference_thread.join()
+            self._inference_thread = None
 
     def _configure_cam(self):
         self.picam2.preview_configuration.main.size = (1920, 1080)
