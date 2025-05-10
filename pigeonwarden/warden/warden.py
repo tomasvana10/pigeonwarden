@@ -114,7 +114,7 @@ class Warden(metaclass=Singleton):
         with self._lock:
             assert self._inference_thread is not None
 
-            self.picam2.start()
+            self.picam2.stop()
             self._stop_flag = True
             self._inference_thread.join()
             self._inference_thread = None
