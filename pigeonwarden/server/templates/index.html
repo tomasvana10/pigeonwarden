@@ -56,7 +56,7 @@
   };
 
   (async () => {
-    status = await getStatus();
+    const status = await getStatus();
     wardenTogglerButton.innerText = `Warden ${status ? "ON" : "OFF"}`;
   })();
 </script>
