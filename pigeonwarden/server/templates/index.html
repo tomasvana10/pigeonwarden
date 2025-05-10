@@ -51,12 +51,12 @@
   };
 
   const getStatus = async () => {
-    const text = fetch("/api/status").then(res => res.text());
+    const text = await fetch("/api/status").then(res => res.text());
     return Boolean(Number(text));
   };
 
-  window.onload = async () => {
+  (async () => {
     const status = await getStatus();
-    document.getElementById("wardenTogglerButton").innerText = `Warden ${status ? "ON" : "OFF"}`;
-  };
+    wardenTogglerButton.innerText = `Warden ${status ? "ON" : "OFF"}`;
+  })();
 </script>
