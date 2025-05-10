@@ -9,7 +9,7 @@ from picamera2 import Picamera2
 from telegram import Bot
 from ultralytics import YOLO
 
-from .. import Singleton, BASE_PATH, ASSETS_PATH, get_timestamp
+from .. import ASSETS_PATH, BASE_PATH, Singleton, get_timestamp
 from ..utils import get_latest_trained_model
 from .speaker import play_sound
 
@@ -54,19 +54,19 @@ class Warden(metaclass=Singleton):
                 setattr(self, k, kwargs[k])
             else:
                 setattr(self, k, getattr(self.__class__, k))
-        
+
         assert self.sound in os.listdir(ASSETS_PATH / "sound")
 
         self.internal_sleep_time = 1 / self.fps
         self.external_sleep_time = (
             self.internal_sleep_time + self.__class__.AVERAGE_INFERENCE_TIME
         )
-        
+
         if self.telegram_alerts:
             load_dotenv(BASE_PATH / self.__class__.ENV)
             self.bot = Bot(token=os.getenv("BOT_TOKEN"))
             self.chat_id = int(os.getenv("CHAT_ID"))
-        
+
         self._stop_flag = False
         self._inference_thread = None
 

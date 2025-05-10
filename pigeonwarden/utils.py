@@ -60,5 +60,6 @@ def get_available_port() -> int:
     port: int = sock.getsockname()[1]
     return port
 
+
 def get_timestamp() -> str:
     return datetime.now().strftime("%d/%m/%Y %H:%M:%S")

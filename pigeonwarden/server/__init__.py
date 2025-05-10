@@ -4,8 +4,6 @@ from typing import Iterator
 from flask import Flask, Response, render_template, stream_with_context
 
 from .. import get_available_port, is_port_in_use
-from ..model import load_dataset, train_model
-from ..test import test_all
 from ..warden import Warden
 
 PORT = 6969
