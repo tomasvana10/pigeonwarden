@@ -52,4 +52,6 @@
 
   const getStatus = async () =>
     await fetch("/api/status").then(res => Boolean(Number(res.text())));
+
+  wardenTogglerButton.innerText = `Warden ${getStatus() ? "ON" : "OFF"}`
 </script>
