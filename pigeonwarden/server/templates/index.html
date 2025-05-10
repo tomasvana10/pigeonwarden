@@ -50,10 +50,13 @@
     cpuTempLabel.innerText = `Temp: ${data.temp}'${data.unit}`;
   };
 
-  const getStatus = async () =>
-    await fetch("/api/status").then(res => Boolean(Number(res.text())));
+  const getStatus = async () => {
+    const text = fetch("/api/status").then(res => res.text());
+    return Boolean(Number(text));
+  };
 
-  getStatus().then(status => {
+  (async () => {
+    status = await getStatus();
     wardenTogglerButton.innerText = `Warden ${status ? "ON" : "OFF"}`;
-  });
+  })();
 </script>
