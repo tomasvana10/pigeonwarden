@@ -41,7 +41,6 @@ class Warden(metaclass=Singleton):
         self.model = YOLO(model=get_latest_trained_model())
         self.picam2 = Picamera2()
         self._configure_cam()
-        self.picam2.start()
 
         self.current_frame: bytes | None = None
         self.most_recent_detection = 0
@@ -86,7 +85,7 @@ class Warden(metaclass=Singleton):
             if now - self.most_recent_detection >= self.alert_cooldown_seconds:
                 play_sound(self.sound, self.volume)
                 if self.telegram_alerts:
-                    self.send_frame(framebytes)
+                    self.send_frame_to_telegram(framebytes)
             self.most_recent_detection = int(time.time())
             return dict(found=True, framebytes=framebytes)
 
@@ -106,6 +105,7 @@ class Warden(metaclass=Singleton):
         with self._lock:
             assert self._inference_thread is None
 
+            self.picam2.start()
             self._stop_flag = False
             self._inference_thread = Thread(target=self.infer_loop, daemon=True)
             self._inference_thread.start()
@@ -114,6 +114,7 @@ class Warden(metaclass=Singleton):
         with self._lock:
             assert self._inference_thread is not None
 
+            self.picam2.start()
             self._stop_flag = True
             self._inference_thread.join()
             self._inference_thread = None
@@ -124,11 +125,11 @@ class Warden(metaclass=Singleton):
         self.picam2.preview_configuration.align()
         self.picam2.configure("preview")
 
-    def send_frame(self, frame: bytes) -> None:
-        thread = Thread(target=asyncio.run, args=(self._send_frame(frame),))
+    def send_frame_to_telegram(self, frame: bytes) -> None:
+        thread = Thread(target=asyncio.run, args=(self._send_frame_to_telegram(frame),))
         thread.start()
 
-    async def _send_frame(self, frame: bytes) -> None:
+    async def _send_frame_to_telegram(self, frame: bytes) -> None:
         await self.bot.send_photo(
             chat_id=self.chat_id,
             photo=frame,
