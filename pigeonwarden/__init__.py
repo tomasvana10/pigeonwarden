@@ -13,7 +13,7 @@ from .utils import (
     get_latest_trained_model,
     get_timestamp,
     is_port_in_use,
-    get_cpu_temp
+    get_cpu_temp,
 )
 
 __all__ = [

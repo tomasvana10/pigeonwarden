@@ -17,7 +17,13 @@ def index() -> str:
     test_cron_days = "1,2,3"
     test_cron_start_time = "07:00"
     test_cron_end_time = "21:00"
-    return render_template("index.html", cron_days=test_cron_days, cron_start_time=test_cron_start_time, cron_end_time=test_cron_end_time)
+    return render_template(
+        "index.html",
+        cron_days=test_cron_days,
+        cron_start_time=test_cron_start_time,
+        cron_end_time=test_cron_end_time,
+        is_inferring=warden.is_inferring(),
+    )
 
 
 @app.route("/api/stream")

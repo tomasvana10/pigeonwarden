@@ -60,7 +60,7 @@ class Warden(metaclass=Singleton):
         self.external_sleep_time = (
             self.internal_sleep_time + self.__class__.AVERAGE_INFERENCE_TIME
         )
-        
+
         if self.telegram_alerts:
             load_dotenv(BASE_PATH / self.__class__.ENV)
             self.bot = Bot(token=os.getenv("BOT_TOKEN"))

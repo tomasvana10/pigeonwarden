@@ -131,7 +131,7 @@
       }
     }
 
-    const status = await getStatus();
-    wardenTogglerButton.innerText = `Warden ${status ? "ON" : "OFF"}`;
+    const isInferring = {{ is_inferring|tojson }};
+    wardenTogglerButton.innerText = `Warden ${isInferring ? "ON" : "OFF"}`;
   };
 </script>
