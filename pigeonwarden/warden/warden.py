@@ -1,7 +1,6 @@
 import asyncio
 import os
 import time
-from datetime import datetime
 from threading import Thread
 
 import cv2
@@ -10,9 +9,8 @@ from picamera2 import Picamera2
 from telegram import Bot
 from ultralytics import YOLO
 
-from .. import Singleton
-from ..constants import BASE_PATH, ASSETS_PATH
-from ..utils import configure_cam, get_latest_trained_model
+from .. import Singleton, BASE_PATH, ASSETS_PATH, get_timestamp
+from ..utils import get_latest_trained_model
 from .speaker import play_sound
 
 
@@ -39,17 +37,11 @@ class Warden(metaclass=Singleton):
         "telegram_alerts",
     ]
 
-    inference_thread = None
-
     def __init__(self, **kwargs: dict[str, int | list[str] | str]) -> None:
         self.model = YOLO(model=get_latest_trained_model())
         self.picam2 = Picamera2()
-        configure_cam(self.picam2)
+        self._configure_cam()
         self.picam2.start()
-
-        load_dotenv(BASE_PATH / self.__class__.ENV)
-        self.bot = Bot(token=os.getenv("BOT_TOKEN"))
-        self.chat_id = int(os.getenv("CHAT_ID"))
 
         self.current_frame: bytes | None = None
         self.most_recent_detection = 0
@@ -69,6 +61,14 @@ class Warden(metaclass=Singleton):
         self.external_sleep_time = (
             self.internal_sleep_time + self.__class__.AVERAGE_INFERENCE_TIME
         )
+        
+        if self.telegram_alerts:
+            load_dotenv(BASE_PATH / self.__class__.ENV)
+            self.bot = Bot(token=os.getenv("BOT_TOKEN"))
+            self.chat_id = int(os.getenv("CHAT_ID"))
+        
+        self._stop_flag = False
+        self._inference_thread = None
 
     def infer(self) -> dict[str, bool | bytes]:
         frame = cv2.cvtColor(self.picam2.capture_array(), cv2.COLOR_RGB2BGR)
@@ -91,28 +91,34 @@ class Warden(metaclass=Singleton):
 
         return dict(found=False, framebytes=framebytes)
 
+    def is_inferring(self) -> bool:
+        return bool(self._inference_thread)
+
     def infer_loop(self) -> None:
-        while True:
+        while not self._stop_flag:
             result = self.infer()
             self.current_frame = result["framebytes"]
             time.sleep(self.internal_sleep_time)
 
-    @classmethod
-    def start_inference(cls, inst: "Warden") -> None:
-        assert cls.inference_thread is None
+    def start_inference(self) -> None:
+        assert self._inference_thread is None
 
-        cls.inference_thread = Thread(target=inst.infer_loop, daemon=True)
-        cls.inference_thread.start()
+        self._stop_flag = False
+        self._inference_thread = Thread(target=self.infer_loop, daemon=True)
+        self._inference_thread.start()
 
-    @classmethod
-    def stop_inference(cls) -> None:
-        assert cls.inference_thread is not None
+    def stop_inference(self) -> None:
+        assert self._inference_thread is not None
 
-        cls.inference_thread.join()
-        cls.inference_thread = None
+        self._stop_flag = True
+        self._inference_thread.join()
+        self._inference_thread = None
 
-    def _get_timestamp(self) -> None:
-        return datetime.utcfromtimestamp(time.time()).strftime("%d/%m/%Y %H:%M:%S")
+    def _configure_cam(self):
+        self.picam2.preview_configuration.main.size = (1920, 1080)
+        self.picam2.preview_configuration.main.format = "RGB888"
+        self.picam2.preview_configuration.align()
+        self.picam2.configure("preview")
 
     def send_frame(self, frame: bytes) -> None:
         thread = Thread(target=asyncio.run, args=(self._send_frame(frame),))
@@ -122,5 +128,5 @@ class Warden(metaclass=Singleton):
         await self.bot.send_photo(
             chat_id=self.chat_id,
             photo=frame,
-            caption=f"Detection at {self._get_timestamp()}",
+            caption=f"Detection at {get_timestamp()}",
         )

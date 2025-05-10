@@ -4,7 +4,7 @@ from zipfile import ZipFile
 
 import requests
 
-from ..constants import DATASET_PATH, DATASET_URL
+from .. import DATASET_PATH, DATASET_URL
 
 
 def load_dataset() -> None:

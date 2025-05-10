@@ -4,28 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pigeon Warden</title>
 </head>
-<script>
-  const withOutputAlert = async (func, id) => {
-    const btn = document.getElementById(id);
-    btn.disabled = true;
-    const output = await func();
-    const text = await output.text();
-    btn.disabled = false;
-    alert(`${output.status}: ${text}`);
-  };
-  const loadDataset = async () => await fetch("/api/load-dataset");
-  const trainModel = async () => await fetch("/api/train-model");
-  const testModel = async () => await fetch("/api/test-model");
-</script>
+
 
 <h1>Pigeon Warden Control Panel</h1>
-<button id="loadDatasetButton" onclick="withOutputAlert(loadDataset, this.id)">
-  Load Pigeon Dataset
-</button>
-<button id="trainModelButton" onclick="withOutputAlert(trainModel, this.id)">
-  Train Model
-</button>
-<button id="testModelButton" onclick="withOutputAlert(testModel, this.id)">
-  Test Model
-</button>
 <img src="/api/stream" width="640" height="360">

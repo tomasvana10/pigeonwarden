@@ -19,38 +19,6 @@ def index() -> str:
     return render_template("index.html")
 
 
-@app.route("/api/load-dataset")
-def _load_dataset() -> Response:
-    try:
-        load_dataset()
-    except FileExistsError:
-        return Response(response="The dataset has already been installed.", status=500)
-
-    return Response(response="Successfully installed dataset.", status=200)
-
-
-@app.route("/api/train-model")
-def _train_model() -> Response:
-    try:
-        train_model()
-    except AssertionError as ex:
-        return Response(response=str(ex), status=500)
-
-    return Response(
-        response="Successfully trained a new iteration of this model.", status=200
-    )
-
-
-@app.route("/api/test-model")
-def _test_model() -> Response:
-    try:
-        test_all()
-    except AssertionError as ex:
-        return Response(response=str(ex), status=500)
-
-    return Response(response="All tests passed.", status=200)
-
-
 @app.route("/api/stream")
 def stream() -> Response:
     def generate() -> Iterator[bytes]:
@@ -68,6 +36,21 @@ def stream() -> Response:
         stream_with_context(generate()),
         mimetype="multipart/x-mixed-replace; boundary=frame",
     )
+
+
+@app.route("/api/toggle-inference")
+def toggle_inference() -> Response:
+    if warden.is_inferring():
+        warden.stop_inference()
+        return Response("0", status=200)
+    else:
+        warden.start_inference()
+        return Response("1", status=200)
+
+
+@app.route("/api/status")
+def status() -> Response:
+    return Response("1" if warden.is_inferring() else "0", status=200)
 
 
 def start_server() -> None:

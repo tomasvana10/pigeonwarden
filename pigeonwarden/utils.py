@@ -1,9 +1,9 @@
 import os
 import socket as s
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from picamera2 import Picamera2
 from ultralytics import YOLO
 
 from .constants import DETECT_PATH
@@ -60,9 +60,5 @@ def get_available_port() -> int:
     port: int = sock.getsockname()[1]
     return port
 
-
-def configure_cam(picam2: Picamera2):
-    picam2.preview_configuration.main.size = (1920, 1080)
-    picam2.preview_configuration.main.format = "RGB888"
-    picam2.preview_configuration.align()
-    picam2.configure("preview")
+def get_timestamp() -> str:
+    return datetime.now().strftime("%d/%m/%Y %H:%M:%S")

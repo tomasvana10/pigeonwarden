@@ -3,7 +3,7 @@ from threading import Event, Thread
 
 import vlc
 
-from ..constants import ASSETS_PATH
+from .. import ASSETS_PATH
 
 
 def _play_sound(soundfile: str, vol: int) -> None:
@@ -13,13 +13,13 @@ def _play_sound(soundfile: str, vol: int) -> None:
     player.set_media(media)
     player.audio_set_volume(vol)
 
-    parsed_event = Event()
+    on_media_parse = Event()
     media.event_manager().event_attach(
-        vlc.EventType.MediaParsedChanged, lambda e: parsed_event.set()
+        vlc.EventType.MediaParsedChanged, lambda e: on_media_parse.set()
     )
 
     media.parse_async()
-    parsed_event.wait(timeout=1)
+    on_media_parse.wait(timeout=1)
 
     duration = media.get_duration() / 1000
 
