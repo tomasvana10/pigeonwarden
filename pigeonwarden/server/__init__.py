@@ -1,7 +1,7 @@
 import time
 from typing import Iterator
 
-from flask import Flask, Response, render_template, stream_with_context, jsonify, request
+from flask import Flask, Response, render_template, stream_with_context, jsonify, request, redirect, url_for
 
 from .. import get_available_port, is_port_in_use, get_cpu_temp
 from ..warden import Warden
@@ -32,6 +32,8 @@ def submit_schedule():
     cron_end_time = request.args.get("cron_end_time")
     
     print(cron_days, cron_start_time, cron_end_time)
+    
+    return redirect(url_for("index"))
 
 
 @app.route("/api/stream")
