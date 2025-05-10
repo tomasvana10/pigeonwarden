@@ -54,7 +54,7 @@ def status() -> Response:
 def init_server() -> None:
     global warden
     warden = Warden()
-    warden.start_inference(warden)
+    warden.start_inference()
 
     if not is_port_in_use(PORT):
         app.run(host="0.0.0.0", port=PORT)
