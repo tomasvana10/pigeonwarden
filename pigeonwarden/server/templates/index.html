@@ -11,6 +11,17 @@
     flex-direction: column;
     align-items: start;
     gap: 1rem;
+    padding: 10px;
+  }
+
+  * {
+    margin: 0;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
   }
 
   .temp {
@@ -18,20 +29,70 @@
     flex-direction: column;
   }
 
+  .sides {
+    display: flex;
+    flex-direction: row;
+    gap: 2.5rem;
+  }
+
+  .left-side,
+  .right-side {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
   .stream {
     max-width: 100%;
     width: 1200px;
     aspect-ratio: 16/9;
   }
+
+  form > div {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+  }
 </style>
 
-<h1>Pigeon Warden Control Panel</h1>
 <div class="content">
-  <div class="temp">
-    <label id="cpuTempLabel" for="cpuTempButton">Temp: NaN</label>
-    <button id="cpuTempButton">Get CPU Temp</button>
+  <h1>Pigeon Warden Control Panel</h1>
+  <div class="sides">
+    <div class="left-side">
+      <h3>General Functions</h3>
+      <button id="wardenTogglerButton"></button>
+      <div class="temp">
+        <label id="cpuTempLabel" for="cpuTempButton">Temp: NaN</label>
+        <button id="cpuTempButton">Get CPU Temp</button>
+      </div>
+    </div>
+    <div class="right-side">
+      <h3>Activation Schedule</h3>
+      <form>
+        <div>
+          <div class="left-side">
+            <label for="cron-days">Days</label>
+            <select name="days" id="cron_days" multiple>
+              <option value="1">Monday</option>
+              <option value="2">Tuesday</option>
+              <option value="3">Wednesday</option>
+              <option value="4">Thursday</option>
+              <option value="5">Friday</option>
+              <option value="6">Saturday</option>
+              <option value="0">Sunday</option>
+            </select>
+          </div>
+          <div class="right-side">
+            <label for="cron-start-time">Turn on at</label>
+            <input type="time" id="cron-start-time" name="cron_start_time" />
+            <label for="cron-end-time">Turn off at</label>
+            <input type="time" id="cron-end-time" name="cron_end_time" />
+          </div>
+        </div>
+        <button style="margin-top: 10px">Save Schedule</button>
+      </form>
+    </div>
   </div>
-  <button id="wardenTogglerButton"></button>
 
   <img class="stream" src="/api/stream" />
 </div>
@@ -55,8 +116,22 @@
     return Boolean(Number(text));
   };
 
-  (async () => {
+  window.onload = async () => {
+    const cronStartTime = "{{ cron_start_time }}";
+    const cronEndTime = "{{ cron_end_time }}";
+    const cronDays = "{{ cron_days }}".split(",");
+
+    document.getElementById("cron-start-time").value = cronStartTime;
+    document.getElementById("cron-end-time").value = cronEndTime;
+
+    const cronDaysSelect = document.getElementById("cron_days");
+    for (const option of cronDaysSelect.options) {
+      if (cronDays.includes(option.value)) {
+        option.selected = true;
+      }
+    }
+
     const status = await getStatus();
     wardenTogglerButton.innerText = `Warden ${status ? "ON" : "OFF"}`;
-  })();
+  };
 </script>

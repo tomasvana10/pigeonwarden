@@ -14,7 +14,10 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 @app.route("/")
 def index() -> str:
-    return render_template("index.html")
+    test_cron_days = "1,2,3"
+    test_cron_start_time = "07:00"
+    test_cron_end_time = "21:00"
+    return render_template("index.html", cron_days=test_cron_days, cron_start_time=test_cron_start_time, cron_end_time=test_cron_end_time)
 
 
 @app.route("/api/stream")
