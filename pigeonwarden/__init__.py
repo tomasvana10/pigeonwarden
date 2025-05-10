@@ -7,7 +7,6 @@ from .utils import (
     is_port_in_use,
 )
 
-
 __all__ = [
     "Singleton",
     "get_latest_trained_model",

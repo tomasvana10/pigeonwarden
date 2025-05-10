@@ -1,5 +1,5 @@
 import time
-from threading import Thread, Event
+from threading import Event, Thread
 
 import vlc
 
@@ -14,11 +14,9 @@ def _play_sound(soundfile: str, vol: int) -> None:
     player.audio_set_volume(vol)
 
     parsed_event = Event()
-
-    def on_parsed(event):
-        parsed_event.set()
-
-    media.event_manager().event_attach(vlc.EventType.MediaParsedChanged, on_parsed)
+    media.event_manager().event_attach(
+        vlc.EventType.MediaParsedChanged, lambda e: parsed_event.set()
+    )
 
     media.parse_async()
     parsed_event.wait(timeout=1)

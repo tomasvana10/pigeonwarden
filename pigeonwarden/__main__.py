@@ -5,7 +5,6 @@ from .server import start_server
 from .test import test_all
 from .utils import export_ncnn
 
-
 arg = sys.argv[1]
 
 if arg == "dataset":

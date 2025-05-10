@@ -8,7 +8,6 @@ from ..model import load_dataset, train_model
 from ..test import test_all
 from ..warden import Warden
 
-
 PORT = 6969
 
 app = Flask(__name__)
@@ -56,13 +55,14 @@ def _test_model() -> Response:
 def stream() -> Response:
     def generate() -> Iterator[bytes]:
         while True:
-            with warden.lock:
-                frame = warden.current_frame
+            if warden.current_frame:
+                yield (
+                    b"--frame\r\nContent-Type: image/jpeg\r\n\r\n"
+                    + warden.current_frame
+                    + b"\r\n"
+                )
 
-            if frame:
-                yield (b"--frame\r\nContent-Type: image/jpeg\r\n\r\n" + frame + b"\r\n")
-
-            time.sleep(warden.sleep_time)
+            time.sleep(warden.external_sleep_time)
 
     return Response(
         stream_with_context(generate()),
@@ -72,8 +72,8 @@ def stream() -> Response:
 
 def start_server() -> None:
     global warden
-    warden = Warden()  # type: ignore
-    warden.start_infer_loop_thread(warden)  # type: ignore
+    warden = Warden()
+    warden.start_inference(warden)
 
     if not is_port_in_use(PORT):
         app.run(host="0.0.0.0", port=PORT)

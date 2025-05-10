@@ -2,3 +2,5 @@ ultralytics
 requests
 flask
 python-vlc
+python-dotenv
+python-telegram-bot
