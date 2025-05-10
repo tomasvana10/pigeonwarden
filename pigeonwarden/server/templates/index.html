@@ -31,7 +31,7 @@
     <label id="cpuTempLabel" for="cpuTempButton">Temp: NaN</label>
     <button id="cpuTempButton">Get CPU Temp</button>
   </div>
-  <button id="wardenTogglerButton">Warden ON</button>
+  <button id="wardenTogglerButton"></button>
 
   <img class="stream" src="/api/stream" />
 </div>
@@ -53,5 +53,7 @@
   const getStatus = async () =>
     await fetch("/api/status").then(res => Boolean(Number(res.text())));
 
-  wardenTogglerButton.innerText = `Warden ${getStatus() ? "ON" : "OFF"}`
+  getStatus().then(status => {
+    wardenTogglerButton.innerText = `Warden ${status ? "ON" : "OFF"}`;
+  });
 </script>
