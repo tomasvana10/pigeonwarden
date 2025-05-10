@@ -68,7 +68,7 @@
     </div>
     <div class="right-side">
       <h3>Activation Schedule</h3>
-      <form>
+      <form action="/submit_schedule" method="GET">
         <div>
           <div class="left-side">
             <label for="cron-days">Days</label>
@@ -128,6 +128,8 @@
     for (const option of cronDaysSelect.options) {
       if (cronDays.includes(option.value)) {
         option.selected = true;
+      } else {
+        option.selected = false;
       }
     }
 
