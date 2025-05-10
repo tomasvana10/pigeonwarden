@@ -115,7 +115,8 @@ class Warden(metaclass=Singleton):
         return datetime.utcfromtimestamp(time.time()).strftime("%d/%m/%Y %H:%M:%S")
 
     def send_frame(self, frame: bytes) -> None:
-        asyncio.create_task(self._send_frame(frame))
+        thread = Thread(target=asyncio.run, args=(self._send_frame(frame),))
+        thread.start()
 
     async def _send_frame(self, frame: bytes) -> None:
         await self.bot.send_photo(
