@@ -55,8 +55,8 @@
     return Boolean(Number(text));
   };
 
-  (async () => {
+  window.onload = async () => {
     const status = await getStatus();
-    wardenTogglerButton.innerText = `Warden ${status ? "ON" : "OFF"}`;
-  })();
+    document.getElementById("wardenTogglerButton").innerText = `Warden ${status ? "ON" : "OFF"}`;
+  };
 </script>
