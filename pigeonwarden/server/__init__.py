@@ -51,7 +51,7 @@ def status() -> Response:
     return Response("1" if warden.is_inferring() else "0", status=200)
 
 
-def start_server() -> None:
+def init_server() -> None:
     global warden
     warden = Warden()
     warden.start_inference(warden)
@@ -62,4 +62,4 @@ def start_server() -> None:
         app.run(host="0.0.0.0", port=get_available_port())
 
 
-__all__ = ["start_server"]
+__all__ = ["init_server"]
