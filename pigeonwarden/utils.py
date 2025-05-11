@@ -8,7 +8,7 @@ from typing import Any
 
 from ultralytics import YOLO
 
-from .constants import DETECT_PATH
+from .common import DETECT_PATH
 
 
 TEMPERATURE_REGEX = re.compile(r"(\d+\.\d+)'([CF])")
