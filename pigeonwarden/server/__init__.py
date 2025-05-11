@@ -22,6 +22,7 @@ def index() -> str:
         cron_days=test_cron_days,
         cron_start_time=test_cron_start_time,
         cron_end_time=test_cron_end_time,
+        is_inferring=warden.is_inferring()
     )
 
 

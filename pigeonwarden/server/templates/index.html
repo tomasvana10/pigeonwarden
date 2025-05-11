@@ -60,7 +60,7 @@
   <div class="sides">
     <div class="left-side">
       <h3>General Functions</h3>
-      <button id="wardenTogglerButton"></button>
+      <button id="wardenTogglerButton">Warden {{ "ON" if is_inferring else "OFF" }}</button>
       <div class="temp">
         <label id="cpuTempLabel" for="cpuTempButton">Temp: NaN</label>
         <button id="cpuTempButton">Get CPU Temp</button>
@@ -101,7 +101,7 @@
   const wardenTogglerButton = document.getElementById("wardenTogglerButton");
   wardenTogglerButton.onclick = async () => {
     const inferring = await isInferring();
-    const endpoint = `/api/${inferring ? "inference-off" : "inference-on"}`;
+    const endpoint = `/api/${inferring ? "inference_off" : "inference_on"}`;
     const res = await fetch(endpoint).then(res => res.json());
 
     wardenTogglerButton.innerText = `Warden ${res.state ? "ON" : "OFF"}`;
@@ -120,7 +120,7 @@
     return Boolean(res.state);
   };
 
-  (async () => {
+  (() => {
     const cronStartTime = "{{ cron_start_time }}";
     const cronEndTime = "{{ cron_end_time }}";
     const cronDays = "{{ cron_days }}".split(",");
@@ -136,8 +136,5 @@
         option.selected = false;
       }
     }
-
-    const inferring = await isInferring();
-    wardenTogglerButton.innerText = `Warden ${inferring.state ? "ON" : "OFF"}`;
   })();
 </script>
