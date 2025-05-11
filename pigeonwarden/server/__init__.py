@@ -68,7 +68,7 @@ def inference_on() -> Response:
 @app.route("/api/inference_off")
 def inference_off() -> Response:
     modified = False
-    if not warden.is_inferring():
+    if warden.is_inferring():
         warden.stop_inference()
         modified = True
     return jsonify(modified=modified, state=0)
