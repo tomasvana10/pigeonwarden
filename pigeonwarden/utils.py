@@ -1,17 +1,16 @@
-import os
-import socket as s
-import re
 import json
+import os
+import re
+import socket as s
 import subprocess
-from threading import Lock
 from datetime import datetime
 from pathlib import Path
+from threading import Lock
 from typing import Any
 
 from ultralytics import YOLO
 
 from .common import DETECT_PATH
-
 
 TEMPERATURE_REGEX = re.compile(r"(\d+\.\d+)'([CF])")
 
@@ -38,12 +37,12 @@ class JSON:
         "config.json": {
             "cron_days": "0123456",
             "cron_start_time": "07:00",
-            "cron_end_time": "20:00"
+            "cron_end_time": "20:00",
         }
     }
-    
+
     lock = Lock()
-    
+
     @staticmethod
     def _read(val: Any | Dict) -> Dict | list[Dict]:
         if isinstance(val, dict):
@@ -67,7 +66,7 @@ class JSON:
         with JSON.lock:
             with open(file, "w") as f:
                 json.dump(obj, f)
-    
+
 
 def get_latest_trained_model(source_ncnn=True) -> Path:
     assert Path(DETECT_PATH).exists(), (
@@ -115,7 +114,9 @@ def get_timestamp() -> str:
 
 
 def get_cpu_temp() -> dict[str, float | str]:
-    output = subprocess.Popen(["vcgencmd", "measure_temp"], stdout=subprocess.PIPE).communicate()[0]
+    output = subprocess.Popen(
+        ["vcgencmd", "measure_temp"], stdout=subprocess.PIPE
+    ).communicate()[0]
     results = re.findall(TEMPERATURE_REGEX, output.decode())[0]
 
     return dict(temp=float(results[0]), unit=results[1])

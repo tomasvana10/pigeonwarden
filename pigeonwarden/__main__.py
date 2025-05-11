@@ -1,16 +1,33 @@
-import sys
+import argparse
 
 from .model import load_dataset, train_model
 from .server import init_server
 from .utils import export_ncnn
 
-arg = sys.argv[1]
 
-if arg == "dataset":
-    load_dataset()
-elif arg == "train":
-    train_model()
-elif arg == "ncnn":
-    export_ncnn()
-elif arg == "init":
-    init_server()
+def main():
+    parser = argparse.ArgumentParser(description="pigeonwarden options")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    subparsers.add_parser("dataset")
+    subparsers.add_parser("train")
+    subparsers.add_parser("ncnn")
+
+    init_parser = subparsers.add_parser("init")
+    init_parser.add_argument("--dev", action="store_true", help="Start in dev mode")
+    init_parser.add_argument("--host", help="Server hostname")
+    init_parser.add_argument("--port", type=int, help="Server port")
+
+    args = parser.parse_args()
+
+    if args.command == "dataset":
+        load_dataset()
+    elif args.command == "train":
+        train_model()
+    elif args.command == "ncnn":
+        export_ncnn()
+    elif args.command == "init":
+        init_server(dev=args.dev, host=args.host, port=args.port)
+
+
+main()

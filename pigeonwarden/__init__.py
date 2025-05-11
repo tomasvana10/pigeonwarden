@@ -7,14 +7,14 @@ from .common import (
     RUNS_PATH,
 )
 from .utils import (
-    Singleton,
     JSON,
+    Singleton,
     export_ncnn,
     get_available_port,
+    get_cpu_temp,
     get_latest_trained_model,
     get_timestamp,
     is_port_in_use,
-    get_cpu_temp,
 )
 
 __all__ = [
