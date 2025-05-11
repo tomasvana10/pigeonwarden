@@ -34,7 +34,7 @@ class ProductionApp(BaseApplication):
         return self.application
 
 
-def init_server(dev=False, *, host, port) -> None:
+def init_server(*, dev, host, port) -> None:
     warden = Warden(fps=4)
     init_routes(app, warden, CONFIG)
     warden.start_inference()
@@ -47,7 +47,7 @@ def init_server(dev=False, *, host, port) -> None:
             "bind": "%s:%s" % (host, free_port),
             "workers": multiprocessing.cpu_count() * 2 + 1,
         }
-        ProductionApp().run(app, options)
+        ProductionApp(app, options).run()
 
 
 __all__ = ["init_server", "HOST", "PORT"]
