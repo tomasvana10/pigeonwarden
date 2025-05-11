@@ -2,6 +2,7 @@ import os
 import socket as s
 import re
 import json
+from subprocess import Popen
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -101,5 +102,5 @@ def get_timestamp() -> str:
 
 
 def get_cpu_temp() -> dict[str, float | str]:
-    results = re.findall(TEMPERATURE_REGEX, os.popen("vcgencmd measure_temp").read())[0]
+    results = re.findall(TEMPERATURE_REGEX, Popen(["vcgencmd", "measure_temp"]))[0]
     return dict(temp=float(results[0]), unit=results[1])
