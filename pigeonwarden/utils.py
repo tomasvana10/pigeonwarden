@@ -2,7 +2,8 @@ import os
 import socket as s
 import re
 import json
-from subprocess import Popen
+import subprocess
+from threading import Lock
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -41,6 +42,8 @@ class JSON:
         }
     }
     
+    lock = Lock()
+    
     @staticmethod
     def _read(val: Any | Dict) -> Dict | list[Dict]:
         if isinstance(val, dict):
@@ -51,17 +54,19 @@ class JSON:
 
     @staticmethod
     def read(file: str) -> Dict:
-        try:
-            with open(file, "r") as f:
-                return JSON._read(json.load(f))
-        except FileNotFoundError:
-            JSON.write(JSON.DEFAULTS[file], file)
-            return JSON.read(file)
+        with JSON.lock:
+            try:
+                with open(file, "r") as f:
+                    return JSON._read(json.load(f))
+            except FileNotFoundError:
+                JSON.write(JSON.DEFAULTS[file], file)
+                return JSON.read(file)
 
     @staticmethod
     def write(obj: Any, file: str) -> None:
-        with open(file, "w") as f:
-            json.dump(obj, f)
+        with JSON.lock:
+            with open(file, "w") as f:
+                json.dump(obj, f)
     
 
 def get_latest_trained_model(source_ncnn=True) -> Path:
@@ -110,5 +115,7 @@ def get_timestamp() -> str:
 
 
 def get_cpu_temp() -> dict[str, float | str]:
-    results = re.findall(TEMPERATURE_REGEX, Popen(["vcgencmd", "measure_temp"]))[0]
+    output = subprocess.Popen(["vcgencmd", "measure_temp"], stdout=subprocess.PIPE).communicate()[0]
+    results = re.findall(TEMPERATURE_REGEX, output.decode())[0]
+
     return dict(temp=float(results[0]), unit=results[1])
