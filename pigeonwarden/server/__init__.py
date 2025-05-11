@@ -12,7 +12,7 @@ app = Flask(__name__)
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 
-def init_server(*, dev: bool, host: str, port: str) -> None:
+def init_server(*, host: str, port: str) -> None:
     warden = Warden(fps=4)
     init_routes(app, warden, CONFIG)
     warden.start_inference()
