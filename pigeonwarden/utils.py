@@ -33,6 +33,14 @@ class Dict(dict):
 
 
 class JSON:
+    DEFAULTS = {
+        "config.json": {
+            "cron_days": "0,1,2,3,4,5,6",
+            "cron_start_time": "07:00",
+            "cron_end_time": "20:00"
+        }
+    }
+    
     @staticmethod
     def _read(val: Any | Dict) -> Dict | list[Dict]:
         if isinstance(val, dict):
@@ -47,14 +55,14 @@ class JSON:
             with open(file, "r") as f:
                 return JSON._read(json.load(f))
         except FileNotFoundError:
-            JSON.write({}, file)
+            JSON.write(JSON.DEFAULTS[file], file)
             return JSON.read(file)
 
     @staticmethod
     def write(obj: Any, file: str) -> None:
         with open(file, "w") as f:
             json.dump(obj, f)
-
+    
 
 def get_latest_trained_model(source_ncnn=True) -> Path:
     assert Path(DETECT_PATH).exists(), (

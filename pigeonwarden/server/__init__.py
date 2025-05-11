@@ -3,10 +3,11 @@ from typing import Iterator
 
 from flask import Flask, Response, render_template, stream_with_context, jsonify, request, redirect, url_for
 
-from .. import get_available_port, is_port_in_use, get_cpu_temp
+from .. import get_available_port, is_port_in_use, get_cpu_temp, JSON
 from ..warden import Warden
 
 PORT = 6969
+CONFIG = "config.json"
 
 app = Flask(__name__)
 app.config["TEMPLATES_AUTO_RELOAD"] = True
@@ -14,25 +15,23 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 @app.route("/")
 def index() -> str:
-    test_cron_days = "1,2,3"
-    test_cron_start_time = "07:00"
-    test_cron_end_time = "21:00"
+    config = JSON.read(CONFIG)
     return render_template(
         "index.html",
-        cron_days=test_cron_days,
-        cron_start_time=test_cron_start_time,
-        cron_end_time=test_cron_end_time,
+        cron_days=config.cron_days,
+        cron_start_time=config.cron_start_time,
+        cron_end_time=config.cron_end_time,
         is_inferring=warden.is_inferring()
     )
 
 
 @app.route("/submit_schedule", methods=["GET"])
-def submit_schedule():
-    cron_days = request.args.get("days")
-    cron_start_time = request.args.get("cron_start_time")
-    cron_end_time = request.args.get("cron_end_time")
-    
-    print(cron_days, cron_start_time, cron_end_time)
+def submit_schedule() -> Response:
+    config = JSON.read(CONFIG)
+    config.cron_days = request.args.get("cron_days")
+    config.cron_start_time = request.args.get("cron_start_time")
+    config.cron_end_time = request.args.get("cron_end_time")
+    JSON.write(config, CONFIG)
     
     return redirect(url_for("index"))
 
