@@ -123,7 +123,7 @@
   (() => {
     const cronStartTime = "{{ cron_start_time }}";
     const cronEndTime = "{{ cron_end_time }}";
-    const cronDays = "{{ cron_days }}".split(",");
+    const cronDays = "{{ cron_days }}".split("");
 
     document.getElementById("cron-start-time").value = cronStartTime;
     document.getElementById("cron-end-time").value = cronEndTime;

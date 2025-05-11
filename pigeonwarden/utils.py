@@ -35,7 +35,7 @@ class Dict(dict):
 class JSON:
     DEFAULTS = {
         "config.json": {
-            "cron_days": "0,1,2,3,4,5,6",
+            "cron_days": "0123456",
             "cron_start_time": "07:00",
             "cron_end_time": "20:00"
         }
