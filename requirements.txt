@@ -4,3 +4,4 @@ flask
 python-vlc
 python-dotenv
 python-telegram-bot
+gunicorn

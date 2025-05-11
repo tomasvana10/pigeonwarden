@@ -1,6 +1,6 @@
 import multiprocessing
 
-import gunicorn
+from gunicorn.app.base import BaseApplication
 from flask import Flask
 
 from .. import get_available_port, is_port_in_use
@@ -15,7 +15,7 @@ app = Flask(__name__)
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 
-class ProductionApp(gunicorn.app.base.BaseApplication):
+class ProductionApp(BaseApplication):
     def __init__(self, app: Flask, options=None):
         self.options = options or {}
         self.application = app
