@@ -34,7 +34,7 @@ class ProductionApp(BaseApplication):
         return self.application
 
 
-def init_server(dev=False, *, host=HOST, port=PORT) -> None:
+def init_server(dev=False, *, host, port) -> None:
     warden = Warden(fps=4)
     init_routes(app, warden, CONFIG)
     warden.start_inference()
@@ -50,4 +50,4 @@ def init_server(dev=False, *, host=HOST, port=PORT) -> None:
         ProductionApp().run(app, options)
 
 
-__all__ = ["init_server"]
+__all__ = ["init_server", "HOST", "PORT"]

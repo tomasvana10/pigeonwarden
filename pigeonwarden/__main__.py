@@ -1,7 +1,7 @@
 import argparse
 
 from .model import load_dataset, train_model
-from .server import init_server
+from .server import init_server, HOST, PORT
 from .utils import export_ncnn
 
 
@@ -27,7 +27,7 @@ def main():
     elif args.command == "ncnn":
         export_ncnn()
     elif args.command == "init":
-        init_server(dev=args.dev, host=args.host, port=args.port)
+        init_server(dev=args.dev, host=args.host or HOST, port=args.port or PORT)
 
 
 main()
