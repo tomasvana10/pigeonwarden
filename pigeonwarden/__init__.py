@@ -1,4 +1,4 @@
-from .constants import (
+from .common import (
     ASSETS_PATH,
     BASE_PATH,
     DATASET_PATH,
@@ -8,6 +8,7 @@ from .constants import (
 )
 from .utils import (
     Singleton,
+    JSON,
     export_ncnn,
     get_available_port,
     get_latest_trained_model,
@@ -18,6 +19,7 @@ from .utils import (
 
 __all__ = [
     "Singleton",
+    "JSON",
     "get_latest_trained_model",
     "get_available_port",
     "export_ncnn",

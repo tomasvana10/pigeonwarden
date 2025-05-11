@@ -1,6 +1,7 @@
 import os
 import socket as s
 import re
+import json
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -22,6 +23,36 @@ class Singleton(type):
         else:
             cls._instances[cls].__init__(*args, **kwargs)
         return cls._instances[cls]
+
+
+class Dict(dict):
+    __getattr__ = dict.__getitem__
+    __setattr__ = dict.__setitem__
+    __delattr__ = dict.__delitem__
+
+
+class JSON:
+    @staticmethod
+    def _read(val: Any | Dict) -> Dict | list[Dict]:
+        if isinstance(val, dict):
+            return Dict({k: JSON._read(v) for k, v in val.items()})
+        if isinstance(val, list):
+            return [JSON._read(v) for v in val]
+        return val
+
+    @staticmethod
+    def read(file: str) -> Dict:
+        try:
+            with open(file, "r") as f:
+                return JSON._read(json.load(f))
+        except FileNotFoundError:
+            JSON.write({}, file)
+            return JSON.read(file)
+
+    @staticmethod
+    def write(obj: Any, file: str) -> None:
+        with open(file, "w") as f:
+            json.dump(obj, f)
 
 
 def get_latest_trained_model(source_ncnn=True) -> Path:

@@ -22,8 +22,8 @@ def index() -> str:
         cron_days=test_cron_days,
         cron_start_time=test_cron_start_time,
         cron_end_time=test_cron_end_time,
-        is_inferring=warden.is_inferring(),
     )
+
 
 @app.route("/submit_schedule", methods=["GET"])
 def submit_schedule():
@@ -36,9 +36,9 @@ def submit_schedule():
     return redirect(url_for("index"))
 
 
-@app.route("/api/stream")
-def stream() -> Response:
-    def generate() -> Iterator[bytes]:
+@app.route("/api/camera")
+def camera() -> Response:
+    def generate_frames() -> Iterator[bytes]:
         while True:
             if warden.current_frame:
                 yield (
@@ -50,24 +50,32 @@ def stream() -> Response:
             time.sleep(warden.external_sleep_time)
 
     return Response(
-        stream_with_context(generate()),
+        stream_with_context(generate_frames()),
         mimetype="multipart/x-mixed-replace; boundary=frame",
     )
 
 
-@app.route("/api/toggle-inference")
-def toggle_inference() -> Response:
-    if warden.is_inferring():
-        warden.stop_inference()
-        return Response("0", status=200)
-    else:
+@app.route("/api/inference_on")
+def inference_on() -> Response:
+    modified = False
+    if not warden.is_inferring():
         warden.start_inference()
-        return Response("1", status=200)
+        modified = True
+    return jsonify(modified=modified, state=0)
+
+
+@app.route("/api/inference_off")
+def inference_off() -> Response:
+    modified = False
+    if not warden.is_inferring():
+        warden.stop_inference()
+        modified = True
+    return jsonify(modified=modified, state=0)
 
 
 @app.route("/api/status")
 def status() -> Response:
-    return Response("1" if warden.is_inferring() else "0", status=200)
+    return jsonify(state=1 if warden.is_inferring() else 0)
 
 
 @app.route("/api/temp")

@@ -94,14 +94,18 @@
     </div>
   </div>
 
-  <img class="stream" src="/api/stream" />
+  <img class="stream" src="/api/camera" />
 </div>
 
 <script>
   const wardenTogglerButton = document.getElementById("wardenTogglerButton");
   wardenTogglerButton.onclick = async () => {
-    const text = await fetch("/api/toggle-inference").then(res => res.text());
-    wardenTogglerButton.innerText = `Warden ${text === "1" ? "ON" : "OFF"}`;
+    const inferring = await isInferring();
+    const endpoint = `/api/${inferring ? "inference-off" : "inference-on"}`;
+    const res = await fetch(endpoint).then(res => res.json());
+
+    wardenTogglerButton.innerText = `Warden ${res.state ? "ON" : "OFF"}`;
+    !res.modified && alert("State could not be modified");
   };
 
   const cpuTempButton = document.getElementById("cpuTempButton");
@@ -111,12 +115,12 @@
     cpuTempLabel.innerText = `Temp: ${data.temp}'${data.unit}`;
   };
 
-  const getStatus = async () => {
-    const text = await fetch("/api/status").then(res => res.text());
-    return Boolean(Number(text));
+  const isInferring = async () => {
+    const res = await fetch("/api/status").then(res => res.json());
+    return Boolean(res.state);
   };
 
-  window.onload = async () => {
+  (async () => {
     const cronStartTime = "{{ cron_start_time }}";
     const cronEndTime = "{{ cron_end_time }}";
     const cronDays = "{{ cron_days }}".split(",");
@@ -133,7 +137,7 @@
       }
     }
 
-    const isInferring = {{ is_inferring|tojson }};
-    wardenTogglerButton.innerText = `Warden ${isInferring ? "ON" : "OFF"}`;
-  };
+    const inferring = await isInferring();
+    wardenTogglerButton.innerText = `Warden ${inferring.state ? "ON" : "OFF"}`;
+  })();
 </script>
