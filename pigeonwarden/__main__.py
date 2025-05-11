@@ -14,7 +14,6 @@ def main():
     subparsers.add_parser("ncnn")
 
     init_parser = subparsers.add_parser("init")
-    init_parser.add_argument("--dev", action="store_true", help="Start in dev mode")
     init_parser.add_argument("--host", help="Server hostname")
     init_parser.add_argument("--port", type=int, help="Server port")
 
@@ -27,7 +26,7 @@ def main():
     elif args.command == "ncnn":
         export_ncnn()
     elif args.command == "init":
-        init_server(dev=args.dev, host=args.host or HOST, port=args.port or PORT)
+        init_server(host=args.host or HOST, port=args.port or PORT)
 
 
 main()
