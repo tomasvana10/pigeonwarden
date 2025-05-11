@@ -53,6 +53,12 @@
     flex-direction: row;
     gap: 1rem;
   }
+
+  .camera {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 </style>
 
 <div class="content">
@@ -60,7 +66,9 @@
   <div class="sides">
     <div class="left-side">
       <h3>General Functions</h3>
-      <button id="wardenTogglerButton">Warden {{ "ON" if is_inferring else "OFF" }}</button>
+      <button id="wardenTogglerButton">
+        Warden {{ "ON" if is_inferring else "OFF" }}
+      </button>
       <div class="temp">
         <label id="cpuTempLabel" for="cpuTempButton">Temp: NaN</label>
         <button id="cpuTempButton">Get CPU Temp</button>
@@ -94,7 +102,10 @@
     </div>
   </div>
 
-  <img class="stream" src="/api/camera" />
+  <div class="camera">
+    <p id="frameTimestamp">Captured at NaN</p>
+    <img class="stream" src="/api/camera" />
+  </div>
 </div>
 
 <script>
@@ -118,6 +129,13 @@
   const isInferring = async () => {
     const res = await fetch("/api/status").then(res => res.json());
     return Boolean(res.state);
+  };
+
+  const frameTimestampSource = new EventSource("/api/current_timestamp_stream");
+  frameTimestampSource.onmessage = event => {
+    document.getElementById(
+      "frameTimestamp"
+    ).innerText = `Captured at ${event.data}`;
   };
 
   (() => {

@@ -37,8 +37,8 @@ def submit_schedule() -> Response:
     return redirect(url_for("index"))
 
 
-@app.route("/api/camera")
-def camera() -> Response:
+@app.route("/api/camera_stream")
+def camera_stream() -> Response:
     def generate_frames() -> Iterator[bytes]:
         while True:
             if warden.current_frame:
@@ -53,6 +53,19 @@ def camera() -> Response:
     return Response(
         stream_with_context(generate_frames()),
         mimetype="multipart/x-mixed-replace; boundary=frame",
+    )
+
+
+@app.route("/api/current_timestamp_stream")
+def stream_text() -> Response:
+    def generate() -> Iterator[str]:
+        while True:
+            yield f"data: {warden.current_frame_timestamp}\n\n"
+            time.sleep(warden.external_sleep_time)
+
+    return Response(
+        stream_with_context(generate()),
+        mimetype="text/event-stream"
     )
 
 

@@ -43,10 +43,12 @@ class Warden(metaclass=Singleton):
         self._configure_cam()
 
         self.current_frame: bytes | None = None
+        self.current_frame_timestamp: str = "N/A"
         self.most_recent_detection = 0
 
         for k, v in kwargs.items():
-            assert k in self.__class__.__allowed__
+            if k not in self.__class__.__allowed__:
+                raise TypeError(f"Invalid argument. Please provide an argument in {self.__class__.__allowed__}")
 
         for k in self.__class__.__allowed__:
             if k in kwargs:
@@ -54,7 +56,8 @@ class Warden(metaclass=Singleton):
             else:
                 setattr(self, k, getattr(self.__class__, k))
 
-        assert self.sound in os.listdir(ASSETS_PATH / "sound")
+        if self.sound not in os.listdir(ASSETS_PATH / "sound"):
+            raise FileNotFoundError(f"{self.sound} does not exist in {ASSETS_PATH / "sound"}")
 
         self.internal_sleep_time = 1 / self.fps
         self.external_sleep_time = (
@@ -71,11 +74,13 @@ class Warden(metaclass=Singleton):
         self._inference_thread = None
 
     def infer(self) -> dict[str, bool | bytes]:
+        self.current_frame_timestamp = get_timestamp()
         frame = cv2.cvtColor(self.picam2.capture_array(), cv2.COLOR_RGB2BGR)
         results = self.model.predict(frame, stream=True, verbose=False)
         result = next(results)
         _, encoded = cv2.imencode(self.__class__.FRAME_ENCODING, result.plot())
         framebytes = encoded.tobytes()
+        self.current_frame = framebytes
 
         if any(
             found["name"] in self.labels and found["confidence"] > self.min_confidence
@@ -97,14 +102,11 @@ class Warden(metaclass=Singleton):
 
     def infer_loop(self) -> None:
         while not self._stop_flag:
-            result = self.infer()
-            self.current_frame = result["framebytes"]
+            self.infer()
             time.sleep(self.internal_sleep_time)
 
     def start_inference(self) -> None:
         with self._lock:
-            assert self._inference_thread is None
-
             self.picam2.start()
             self._stop_flag = False
             self._inference_thread = Thread(target=self.infer_loop, daemon=True)
@@ -112,8 +114,6 @@ class Warden(metaclass=Singleton):
 
     def stop_inference(self) -> None:
         with self._lock:
-            assert self._inference_thread is not None
-
             self.picam2.stop()
             self._stop_flag = True
             self._inference_thread.join()
@@ -133,5 +133,5 @@ class Warden(metaclass=Singleton):
         await self.bot.send_photo(
             chat_id=self.chat_id,
             photo=frame,
-            caption=f"Detection at {get_timestamp()}",
+            caption=f"Detection at {self.current_frame_timestamp}",
         )
