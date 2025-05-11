@@ -57,7 +57,7 @@ class Warden(metaclass=Singleton):
                 setattr(self, k, getattr(self.__class__, k))
 
         if self.sound not in os.listdir(ASSETS_PATH / "sound"):
-            raise FileNotFoundError(f"{self.sound} does not exist in {ASSETS_PATH / "sound"}")
+            raise FileNotFoundError(f"{self.sound} does not exist in {ASSETS_PATH / 'sound'}")
 
         self.internal_sleep_time = 1 / self.fps
         self.external_sleep_time = (
