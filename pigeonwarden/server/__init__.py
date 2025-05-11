@@ -28,7 +28,7 @@ def index() -> str:
 @app.route("/submit_schedule", methods=["GET"])
 def submit_schedule() -> Response:
     config = JSON.read(CONFIG)
-    config.cron_days = request.args.get("cron_days")
+    config.cron_days = "".join(request.args.getlist("cron_days"))
     config.cron_start_time = request.args.get("cron_start_time")
     config.cron_end_time = request.args.get("cron_end_time")
     JSON.write(config, CONFIG)
