@@ -1,7 +1,6 @@
 import json
 import os
 import re
-import socket as s
 import subprocess
 from datetime import datetime
 from pathlib import Path
@@ -95,18 +94,6 @@ def export_ncnn():
 
     model = YOLO(get_latest_trained_model(source_ncnn=False))
     model.export(format="ncnn")
-
-
-def is_port_in_use(port: int) -> bool:
-    with s.socket(s.AF_INET, s.SOCK_STREAM) as sock:
-        return sock.connect_ex(("localhost", port)) == 0
-
-
-def get_available_port() -> int:
-    sock = s.socket()
-    sock.bind(("", 0))
-    port: int = sock.getsockname()[1]
-    return port
 
 
 def get_timestamp() -> str:

@@ -1,7 +1,8 @@
 import argparse
+import subprocess
 
 from .model import load_dataset, train_model
-from .server import init_server, HOST, PORT
+from .server import run_dev, HOST, PORT
 from .utils import export_ncnn
 
 
@@ -13,9 +14,13 @@ def main():
     subparsers.add_parser("train")
     subparsers.add_parser("ncnn")
 
-    init_parser = subparsers.add_parser("init")
-    init_parser.add_argument("--host", help="Server hostname")
-    init_parser.add_argument("--port", type=int, help="Server port")
+    run_parser = subparsers.add_parser("run")
+    run_subparsers = run_parser.add_subparsers(dest="env", required=True)
+
+    for env in ["dev", "prod"]:
+        env_parser = run_subparsers.add_parser(env)
+        env_parser.add_argument("--host", help="Server hostname")
+        env_parser.add_argument("--port", type=int, help="Server port")
 
     args = parser.parse_args()
 
@@ -25,8 +30,23 @@ def main():
         train_model()
     elif args.command == "ncnn":
         export_ncnn()
-    elif args.command == "init":
-        init_server(host=args.host or HOST, port=args.port or PORT)
+    elif args.command == "run":
+        host = args.host or HOST
+        port = args.port or PORT
+        if args.env == "dev":
+            run_dev(host=host, port=port)
+        elif args.env == "prod":
+            subprocess.run(
+                [
+                    "waitress-serve",
+                    "--host",
+                    host,
+                    "--port",
+                    str(port),
+                    "--call",
+                    "pigeonwarden.server:_factory",
+                ]
+            )
 
 
 main()
