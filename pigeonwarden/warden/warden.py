@@ -102,8 +102,8 @@ class Warden(metaclass=Singleton):
 
     def is_inferring(self) -> bool:
         with self._lock:
-            return bool(self._inference_thread)
-
+            return self._inference_thread is not None and self._inference_thread.is_alive()
+        
     def infer_loop(self) -> None:
         while not self._stop_flag:
             self.infer()
@@ -120,8 +120,6 @@ class Warden(metaclass=Singleton):
         with self._lock:
             self.picam2.stop()
             self._stop_flag = True
-            self._inference_thread.join()
-            self._inference_thread = None
 
     def _configure_cam(self):
         self.picam2.preview_configuration.main.size = (1920, 1080)

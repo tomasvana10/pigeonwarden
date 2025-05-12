@@ -22,7 +22,7 @@ def _factory() -> Flask:
 
 def run_dev(*, host: str = HOST, port: int = PORT) -> None:
     app = _factory()
-    app.run(host=host, port=port)
+    app.run(host=host, port=port, threaded=True)
 
 
 __all__ = ["run_dev", "HOST", "PORT"]
