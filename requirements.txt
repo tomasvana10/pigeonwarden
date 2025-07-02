@@ -16,6 +16,7 @@ flask_httpauth
 flask_limiter
 passlib
 bcrypt==4.0.1
+redis
 
 # misc
 python-dotenv
