@@ -13,8 +13,6 @@ waitress
 
 # authentication
 flask_httpauth
-passlib
-bcrypt==4.0.1
 flask_limiter
 
 # misc

@@ -38,7 +38,7 @@ class Warden(metaclass=Singleton):
         "telegram_alerts",
     ]
 
-    def __init__(self, **kwargs: dict[str, int | list[str] | str]) -> None:
+    def __init__(self, **kwargs: int | list[str] | str) -> None:
         self.model = YOLO(model=get_latest_trained_model())
         self.picam2 = Picamera2()
         self._configure_cam()

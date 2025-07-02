@@ -25,7 +25,7 @@ class Singleton(type):
         return cls._instances[cls]
 
 
-class Dict(dict):
+class Dict(dict):    
     __getattr__ = dict.__getitem__
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__

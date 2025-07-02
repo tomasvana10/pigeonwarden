@@ -21,6 +21,7 @@ def init_routes(
     app: Flask, warden: Warden, auth: Optional[HTTPBasicAuth], dev: bool, config: str
 ) -> None:
     if not dev:
+
         @app.before_request
         def main_auth() -> Optional[Response]:
             return auth.login_required(lambda: None)()

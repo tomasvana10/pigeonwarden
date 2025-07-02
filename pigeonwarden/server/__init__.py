@@ -1,6 +1,5 @@
 import os
 
-import redis
 from dotenv import load_dotenv
 from flask import Flask
 from flask_httpauth import HTTPBasicAuth
@@ -23,7 +22,7 @@ def _factory(dev: bool = False) -> Flask:
     load_dotenv()
     warden = Warden(fps=4)
     auth = None
-    
+
     if not dev:
         auth = HTTPBasicAuth()
         limiter = Limiter(
@@ -34,7 +33,6 @@ def _factory(dev: bool = False) -> Flask:
         )
         limiter.init_app(_app)
 
-
         USERNAME = os.getenv("USERNAME")
         USERPASS = os.getenv("USERPASS")
 
@@ -44,7 +42,7 @@ def _factory(dev: bool = False) -> Flask:
         def _verify_password(username: str, password: str):
             if username in users and bcrypt.verify(password, users[username]):
                 return username
-    
+
     init_routes(_app, warden, auth, dev, CONFIG)
     warden.start_inference()
 
