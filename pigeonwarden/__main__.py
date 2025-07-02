@@ -43,6 +43,8 @@ def main():
                     host,
                     "--port",
                     str(port),
+                    "--threads",
+                    "35",
                     "--call",
                     "pigeonwarden.server:_factory",
                 ]
