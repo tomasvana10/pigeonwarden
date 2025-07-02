@@ -14,6 +14,8 @@ waitress
 # authentication
 flask_httpauth
 flask_limiter
+passlib
+bcrypt==4.0.1
 
 # misc
 python-dotenv
