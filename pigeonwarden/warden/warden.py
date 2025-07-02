@@ -2,6 +2,7 @@ import asyncio
 import os
 import time
 from threading import Lock, Thread
+from typing import Optional
 
 import cv2
 from dotenv import load_dotenv
@@ -42,7 +43,7 @@ class Warden(metaclass=Singleton):
         self.picam2 = Picamera2()
         self._configure_cam()
 
-        self.current_frame: bytes | None = None
+        self.current_frame: Optional[bytes] = None
         self.current_frame_timestamp: str = "N/A"
         self.most_recent_detection = 0
 
@@ -102,8 +103,10 @@ class Warden(metaclass=Singleton):
 
     def is_inferring(self) -> bool:
         with self._lock:
-            return self._inference_thread is not None and self._inference_thread.is_alive()
-        
+            return (
+                self._inference_thread is not None and self._inference_thread.is_alive()
+            )
+
     def infer_loop(self) -> None:
         while not self._stop_flag:
             self.infer()

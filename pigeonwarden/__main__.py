@@ -2,7 +2,7 @@ import argparse
 import subprocess
 
 from .model import load_dataset, train_model
-from .server import run_dev, HOST, PORT
+from .server import HOST, PORT, run_dev
 from .utils import export_ncnn
 
 

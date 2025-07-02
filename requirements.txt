@@ -1,7 +1,22 @@
+# pigeon inference
 ultralytics
-requests
-flask
 python-vlc
-python-dotenv
-python-telegram-bot
 ncnn
+numpy==1.26.4
+
+# notifications
+python-telegram-bot
+
+# production hosting
+flask
+waitress
+
+# authentication
+flask_httpauth
+passlib
+bcrypt==4.0.1
+flask_limiter
+
+# misc
+python-dotenv
+requests

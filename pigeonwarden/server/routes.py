@@ -1,5 +1,5 @@
 import time
-from typing import Iterator
+from typing import Iterator, Optional
 
 from flask import (
     Flask,
@@ -11,12 +11,20 @@ from flask import (
     stream_with_context,
     url_for,
 )
+from flask_httpauth import HTTPBasicAuth
 
 from .. import JSON, get_cpu_temp
 from ..warden import Warden
 
 
-def init_routes(app: Flask, warden: Warden, config: str) -> None:
+def init_routes(
+    app: Flask, warden: Warden, auth: Optional[HTTPBasicAuth], dev: bool, config: str
+) -> None:
+    if not dev:
+        @app.before_request
+        def main_auth() -> Optional[Response]:
+            return auth.login_required(lambda: None)()
+
     @app.route("/")
     def index() -> str:
         cfg = JSON.read(config)
@@ -40,7 +48,7 @@ def init_routes(app: Flask, warden: Warden, config: str) -> None:
 
     @app.route("/api/camera_stream")
     def camera_stream() -> Response:
-        def generate_frames() -> Iterator[bytes]:
+        def generate() -> Iterator[bytes]:
             while True:
                 if warden.current_frame:
                     yield (
@@ -52,7 +60,7 @@ def init_routes(app: Flask, warden: Warden, config: str) -> None:
                 time.sleep(warden.external_sleep_time)
 
         return Response(
-            stream_with_context(generate_frames()),
+            stream_with_context(generate()),
             mimetype="multipart/x-mixed-replace; boundary=frame",
         )
 
