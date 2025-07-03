@@ -1,7 +1,6 @@
 import os
 import re
 import sqlite3
-import subprocess
 from datetime import datetime
 from pathlib import Path
 from threading import Lock
@@ -105,12 +104,3 @@ def export_ncnn():
 
 def get_timestamp() -> str:
     return datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-
-
-def get_cpu_temp() -> dict[str, float | str]:
-    output = subprocess.Popen(
-        ["vcgencmd", "measure_temp"], stdout=subprocess.PIPE
-    ).communicate()[0]
-    results = re.findall(TEMPERATURE_REGEX, output.decode())[0]
-
-    return dict(temp=float(results[0]), unit=results[1])

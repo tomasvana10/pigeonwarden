@@ -13,7 +13,7 @@ from flask import (
 )
 from flask_httpauth import HTTPBasicAuth
 
-from .. import Config, get_cpu_temp
+from .. import Config
 from ..warden import Warden
 
 
@@ -94,7 +94,3 @@ def init_routes(
     @app.route("/api/status")
     def status() -> Response:
         return jsonify(state=1 if warden.is_inferring() else 0)
-
-    @app.route("/api/temp")
-    def temp() -> Response:
-        return jsonify(**get_cpu_temp())

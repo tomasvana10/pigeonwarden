@@ -69,10 +69,12 @@
       <button id="wardenTogglerButton">
         Warden {{ "ON" if is_inferring else "OFF" }}
       </button>
+      <!--
       <div class="temp">
         <label id="cpuTempLabel" for="cpuTempButton">Temp: NaN</label>
         <button id="cpuTempButton">Get CPU Temp</button>
       </div>
+      -->
     </div>
     <div class="right-side">
       <h3>Activation Schedule</h3>
@@ -119,12 +121,14 @@
     !res.modified && alert("State could not be modified");
   };
 
+  /*
   const cpuTempButton = document.getElementById("cpuTempButton");
   const cpuTempLabel = document.getElementById("cpuTempLabel");
   cpuTempButton.onclick = async () => {
     const data = await fetch("/api/temp").then(res => res.json());
     cpuTempLabel.innerText = `Temp: ${data.temp}'${data.unit}`;
   };
+  */
 
   const isInferring = async () => {
     const res = await fetch("/api/status").then(res => res.json());
