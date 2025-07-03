@@ -13,37 +13,38 @@ from flask import (
 )
 from flask_httpauth import HTTPBasicAuth
 
-from .. import JSON, get_cpu_temp
+from .. import Config, get_cpu_temp
 from ..warden import Warden
 
 
 def init_routes(
-    app: Flask, warden: Warden, auth: Optional[HTTPBasicAuth], dev: bool, config: str
+    app: Flask, warden: Warden, auth: Optional[HTTPBasicAuth], dev: bool
 ) -> None:
+    conf = Config()
+    
     if not dev:
-
         @app.before_request
         def main_auth() -> Optional[Response]:
             return auth.login_required(lambda: None)()
 
     @app.route("/")
     def index() -> str:
-        cfg = JSON.read(config)
+        entries = conf.read_all()
+        
         return render_template(
             "index.html",
-            cron_days=cfg.cron_days,
-            cron_start_time=cfg.cron_start_time,
-            cron_end_time=cfg.cron_end_time,
+            cron_days=entries["cron_days"],
+            cron_start_time=entries["cron_start_time"],
+            cron_end_time=entries["cron_end_time"],
             is_inferring=warden.is_inferring(),
         )
 
     @app.route("/submit_schedule", methods=["GET"])
     def submit_schedule() -> Response:
-        cfg = JSON.read(config)
-        cfg.cron_days = "".join(request.args.getlist("cron_days"))
-        cfg.cron_start_time = request.args.get("cron_start_time")
-        cfg.cron_end_time = request.args.get("cron_end_time")
-        JSON.write(cfg, config)
+        conf.write("cron_days", "".join(request.args.getlist("cron_days")))
+        conf.write("cron_start_time", request.args.get("cron_start_time"))
+        conf.write("cron_end_time", request.args.get("cron_end_time"))
+        
 
         return redirect(url_for("index"))
 

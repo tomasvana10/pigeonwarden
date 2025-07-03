@@ -1,6 +1,6 @@
-import json
 import os
 import re
+import sqlite3
 import subprocess
 from datetime import datetime
 from pathlib import Path
@@ -20,51 +20,37 @@ class Singleton(type):
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
-        else:
-            cls._instances[cls].__init__(*args, **kwargs)
+
         return cls._instances[cls]
 
 
-class Dict(dict):
-    __getattr__ = dict.__getitem__
-    __setattr__ = dict.__setitem__
-    __delattr__ = dict.__delitem__
+class Config(Singleton):
+    def __init__(self, db_path="config.db"):
+        self.db_path = db_path
+        self.lock = Lock()
+        self._init_db()
 
+    def _init_db(self):
+        with self.lock, sqlite3.connect(self.db_path) as conn:
+            conn.execute(
+                "CREATE TABLE IF NOT EXISTS config (key TEXT PRIMARY KEY, value TEXT)"
+            )
 
-class JSON:
-    DEFAULTS = {
-        "config.json": {
-            "cron_days": "0123456",
-            "cron_start_time": "07:00",
-            "cron_end_time": "20:00",
-        }
-    }
+    def read(self, key: str, default=None) -> str | None:
+        with self.lock, sqlite3.connect(self.db_path) as conn:
+            cur = conn.execute("SELECT value FROM config WHERE key = ?", (key,))
+            row = cur.fetchone()
+            return row[0] if row else default
 
-    lock = Lock()
+    def write(self, key: str, value: str) -> None:
+        with self.lock, sqlite3.connect(self.db_path) as conn:
+            conn.execute("REPLACE INTO config (key, value) VALUES (?, ?)", (key, value))
+            conn.commit()
 
-    @staticmethod
-    def _read(val: Any | Dict) -> Dict | list[Dict]:
-        if isinstance(val, dict):
-            return Dict({k: JSON._read(v) for k, v in val.items()})
-        if isinstance(val, list):
-            return [JSON._read(v) for v in val]
-        return val
-
-    @staticmethod
-    def read(file: str) -> Dict:
-        with JSON.lock:
-            try:
-                with open(file, "r") as f:
-                    return JSON._read(json.load(f))
-            except FileNotFoundError:
-                JSON.write(JSON.DEFAULTS[file], file)
-                return JSON.read(file)
-
-    @staticmethod
-    def write(obj: Any, file: str) -> None:
-        with JSON.lock:
-            with open(file, "w") as f:
-                json.dump(obj, f)
+    def read_all(self) -> dict:
+        with self.lock, sqlite3.connect(self.db_path) as conn:
+            cur = conn.execute("SELECT key, value FROM config")
+            return {row[0]: row[1] for row in cur.fetchall()}
 
 
 def get_latest_trained_model(source_ncnn=True) -> Path:

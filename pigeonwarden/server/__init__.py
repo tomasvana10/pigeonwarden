@@ -12,7 +12,6 @@ from .routes import init_routes
 
 PORT = 6969
 HOST = "0.0.0.0"
-CONFIG = "config.json"
 
 _app = Flask(__name__)
 _app.config["TEMPLATES_AUTO_RELOAD"] = True
@@ -43,7 +42,7 @@ def _factory(dev: bool = False) -> Flask:
             if username in users and bcrypt.verify(password, users[username]):
                 return username
 
-    init_routes(_app, warden, auth, dev, CONFIG)
+    init_routes(_app, warden, auth, dev)
     warden.start_inference()
 
     return _app

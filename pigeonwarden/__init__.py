@@ -7,7 +7,7 @@ from .common import (
     RUNS_PATH,
 )
 from .utils import (
-    JSON,
+    Config,
     Singleton,
     export_ncnn,
     get_cpu_temp,
@@ -17,7 +17,7 @@ from .utils import (
 
 __all__ = [
     "Singleton",
-    "JSON",
+    "Config",
     "get_latest_trained_model",
     "export_ncnn",
     "get_timestamp",
