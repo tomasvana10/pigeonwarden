@@ -17,7 +17,7 @@ def main():
     run_parser = subparsers.add_parser("run")
     run_subparsers = run_parser.add_subparsers(dest="env", required=True)
 
-    for env in ["dev", "prod"]:
+    for env in ["dev", "deploy"]:
         env_parser = run_subparsers.add_parser(env)
         env_parser.add_argument("--host", help="Server hostname")
         env_parser.add_argument("--port", type=int, help="Server port")
@@ -35,7 +35,7 @@ def main():
         port = args.port or PORT
         if args.env == "dev":
             run_dev(host=host, port=port)
-        elif args.env == "prod":
+        elif args.env == "deploy":
             subprocess.run(
                 [
                     "waitress-serve",
