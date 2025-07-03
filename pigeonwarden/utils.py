@@ -24,7 +24,7 @@ class Singleton(type):
         return cls._instances[cls]
 
 
-class Config(Singleton):
+class Config(metaclass=Singleton):
     def __init__(self, db_path="config.db"):
         self.db_path = db_path
         self.lock = Lock()
