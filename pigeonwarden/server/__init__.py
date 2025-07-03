@@ -27,7 +27,7 @@ def _factory(dev: bool = False) -> Flask:
         limiter = Limiter(
             get_remote_address,
             app=_app,
-            storage_uri=f"redis://{os.getenv('REDIS_HOST', 'localhost')}:{os.getenv('REDIS_PORT', 6379)}",
+            storage_uri=f"redis://{os.getenv('DEVICE_IP')}:6379",
             default_limits=["5 per minute"],
         )
         limiter.init_app(_app)
