@@ -11,6 +11,8 @@ RUN echo "deb http://archive.raspberrypi.org/debian/ bookworm main" > /etc/apt/s
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 82B129927FA3303E && \
     apt-get update && apt-get install -y --no-install-recommends python3-picamera2
 
+ENV LD_LIBRARY_PATH=/opt/vc/lib
+
 WORKDIR /app
 
 COPY requirements.txt .

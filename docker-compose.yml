@@ -11,10 +11,13 @@ services:
       - /dev/video0:/dev/video0
     volumes:
       - .:/app
+      - /dev:/dev
+      - /opt/vc:/opt/vc
     env_file:
       - .env.local
     environment:
       - UDEV=1
+      - LD_LIBRARY_PATH=/opt/vc/lib
     command: ["python3", "-m", "pigeonwarden", "run", "dev"]
 
   pigeonwarden-prod:
@@ -35,6 +38,11 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - UDEV=1
+      - LD_LIBRARY_PATH=/opt/vc/lib
+    volumes:
+      - .:/app
+      - /dev:/dev
+      - /opt/vc:/opt/vc
     command: ["python3", "-m", "pigeonwarden", "run", "deploy"]
 
   redis:
