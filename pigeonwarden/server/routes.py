@@ -21,8 +21,9 @@ def init_routes(
     app: Flask, warden: Warden, auth: Optional[HTTPBasicAuth], dev: bool
 ) -> None:
     conf = Config()
-    
+
     if not dev:
+
         @app.before_request
         def main_auth() -> Optional[Response]:
             return auth.login_required(lambda: None)()
@@ -30,7 +31,7 @@ def init_routes(
     @app.route("/")
     def index() -> str:
         entries = conf.read_all()
-        
+
         return render_template(
             "index.html",
             cron_days=entries["cron_days"],
@@ -44,7 +45,6 @@ def init_routes(
         conf.write("cron_days", "".join(request.args.getlist("cron_days")))
         conf.write("cron_start_time", request.args.get("cron_start_time"))
         conf.write("cron_end_time", request.args.get("cron_end_time"))
-        
 
         return redirect(url_for("index"))
 

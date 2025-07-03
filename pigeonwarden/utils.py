@@ -5,7 +5,7 @@ import subprocess
 from datetime import datetime
 from pathlib import Path
 from threading import Lock
-from typing import Any
+from typing import Any, TypedDict
 
 from ultralytics import YOLO
 
@@ -24,17 +24,36 @@ class Singleton(type):
         return cls._instances[cls]
 
 
+class ConfigTable(TypedDict):
+    cron_days: str
+    cron_start_time: str
+    cron_end_time: str
+
+
 class Config(metaclass=Singleton):
+    DEFAULTS: ConfigTable = {
+        "cron_days": "0123456",
+        "cron_start_time": "07:00",
+        "cron_end_time": "20:00",
+    }
+
     def __init__(self, db_path="config.db"):
         self.db_path = db_path
         self.lock = Lock()
         self._init_db()
+        self._ensure_defaults()
 
     def _init_db(self):
         with self.lock, sqlite3.connect(self.db_path) as conn:
             conn.execute(
                 "CREATE TABLE IF NOT EXISTS config (key TEXT PRIMARY KEY, value TEXT)"
             )
+
+    def _ensure_defaults(self):
+        existing = self.read_all()
+        for key, default_val in self.DEFAULTS.items():
+            if key not in existing:
+                self.write(key, default_val)
 
     def read(self, key: str, default=None) -> str | None:
         with self.lock, sqlite3.connect(self.db_path) as conn:
@@ -47,10 +66,12 @@ class Config(metaclass=Singleton):
             conn.execute("REPLACE INTO config (key, value) VALUES (?, ?)", (key, value))
             conn.commit()
 
-    def read_all(self) -> dict:
+    def read_all(self) -> ConfigTable:
         with self.lock, sqlite3.connect(self.db_path) as conn:
             cur = conn.execute("SELECT key, value FROM config")
-            return {row[0]: row[1] for row in cur.fetchall()}
+            data = {row[0]: row[1] for row in cur.fetchall()}
+
+        return {**self.DEFAULTS, **data}
 
 
 def get_latest_trained_model(source_ncnn=True) -> Path:
