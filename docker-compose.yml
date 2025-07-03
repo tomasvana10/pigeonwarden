@@ -1,6 +1,8 @@
 services:
   pigeonwarden-dev:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: pigeonwarden-dev
     network_mode: "host"
     privileged: true
@@ -13,6 +15,7 @@ services:
       - .:/app
       - /dev:/dev
       - /opt/vc:/opt/vc
+      - /run/udev:/run/udev:ro
     env_file:
       - .env.local
     environment:
@@ -21,7 +24,9 @@ services:
     command: ["python3", "-m", "pigeonwarden", "run", "dev"]
 
   pigeonwarden-prod:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: pigeonwarden-prod
     network_mode: "host"
     privileged: true
@@ -32,6 +37,11 @@ services:
       - /dev/video0:/dev/video0
     depends_on:
       - redis
+    volumes:
+      - .:/app
+      - /dev:/dev
+      - /opt/vc:/opt/vc
+      - /run/udev:/run/udev:ro
     env_file:
       - .env.local
     environment:
@@ -39,10 +49,6 @@ services:
       - REDIS_PORT=6379
       - UDEV=1
       - LD_LIBRARY_PATH=/opt/vc/lib
-    volumes:
-      - .:/app
-      - /dev:/dev
-      - /opt/vc:/opt/vc
     command: ["python3", "-m", "pigeonwarden", "run", "deploy"]
 
   redis:
