@@ -29,7 +29,7 @@ def _factory(dev: bool = False) -> Flask:
         limiter = Limiter(
             get_remote_address,
             app=_app,
-            storage_uri=f"redis://{components["host"]}:{components["port"]}",
+            storage_uri=f"redis://{components['host']}:{components['port']}",
             default_limits=["5 per minute"],
         )
         limiter.init_app(_app)
