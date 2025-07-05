@@ -19,7 +19,7 @@ _app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 def _factory(dev: bool = False) -> Flask:
     load_dotenv()
-    warden = Warden(fps=4)
+    warden = Warden()
     auth = None
 
     if not dev:
@@ -27,7 +27,7 @@ def _factory(dev: bool = False) -> Flask:
         limiter = Limiter(
             get_remote_address,
             app=_app,
-            storage_uri=f"redis://{os.getenv('DEVICE_IP')}:6379",
+            storage_uri=f"redis://{os.getenv('DEVICE_IP') if int(os.getenv('USE_IP_FOR_REDIS_URI', 0)) else 'localhost'}:6379",
             default_limits=["5 per minute"],
         )
         limiter.init_app(_app)

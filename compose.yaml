@@ -19,6 +19,7 @@ services:
     env_file:
       - .env.local
     environment:
+      - USE_IP_FOR_REDIS_URI=1
       - UDEV=1
       - LD_LIBRARY_PATH=/opt/vc/lib
     command: ["python3", "-m", "pigeonwarden", "run", "dev"]
@@ -47,6 +48,7 @@ services:
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - USE_IP_FOR_REDIS_URI=1
       - UDEV=1
       - LD_LIBRARY_PATH=/opt/vc/lib
     command: ["python3", "-m", "pigeonwarden", "run", "deploy"]
