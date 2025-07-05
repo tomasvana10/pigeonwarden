@@ -10,7 +10,7 @@ from picamera2 import Picamera2
 from telegram import Bot
 from ultralytics import YOLO
 
-from .. import ASSETS_PATH, BASE_PATH, Singleton, get_timestamp
+from .. import ASSETS_PATH, BASE_PATH, Singleton, get_timestamp, get_warden_settings
 from ..utils import get_latest_trained_model
 from .speaker import play_sound
 
@@ -19,26 +19,16 @@ class Warden(metaclass=Singleton):
     FRAME_ENCODING = ".jpg"
     ENV = ".env.local"
     AVERAGE_INFERENCE_TIME = 0.2
+    
+    min_confidence: int
+    labels: list[str]
+    sound: str
+    volume: int
+    alert_cooldown_seconds: int
+    fps: int
+    telegram_alerts: bool
 
-    min_confidence = 0.8
-    labels = ["common-mynas", "pigeons"]
-    sound = "airhorn.mp3"
-    volume = 150
-    alert_cooldown_seconds = 10
-    fps = 1
-    telegram_alerts = True
-
-    __allowed__ = [
-        "min_confidence",
-        "labels",
-        "sound",
-        "volume",
-        "alert_cooldown_seconds",
-        "fps",
-        "telegram_alerts",
-    ]
-
-    def __init__(self, **kwargs: int | list[str] | str) -> None:
+    def __init__(self) -> None:
         self.model = YOLO(model=get_latest_trained_model())
         self.picam2 = Picamera2()
         self._configure_cam()
@@ -47,17 +37,9 @@ class Warden(metaclass=Singleton):
         self.current_frame_timestamp: str = "N/A"
         self.most_recent_detection = 0
 
-        for k, v in kwargs.items():
-            if k not in self.__class__.__allowed__:
-                raise TypeError(
-                    f"Invalid argument. Please provide an argument in {self.__class__.__allowed__}"
-                )
-
-        for k in self.__class__.__allowed__:
-            if k in kwargs:
-                setattr(self, k, kwargs[k])
-            else:
-                setattr(self, k, getattr(self.__class__, k))
+        settings = get_warden_settings()
+        for k, v in settings.items():
+            setattr(self, k, v)
 
         if self.sound not in os.listdir(ASSETS_PATH / "sound"):
             raise FileNotFoundError(
@@ -71,12 +53,12 @@ class Warden(metaclass=Singleton):
 
         if self.telegram_alerts:
             load_dotenv(BASE_PATH / self.__class__.ENV)
-            self.bot = Bot(token=os.getenv("BOT_TOKEN"))
-            self.chat_id = int(os.getenv("CHAT_ID"))
+            self.bot = Bot(token=os.getenv("BOT_TOKEN")) # type: ignore
+            self.chat_id = int(os.getenv("CHAT_ID")) # type: ignore
 
         self._lock = Lock()
         self._stop_flag = False
-        self._inference_thread = None
+        self._inference_thread: None | Thread = None
 
     def infer(self) -> dict[str, bool | bytes]:
         self.current_frame_timestamp = get_timestamp()

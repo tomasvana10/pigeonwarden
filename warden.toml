@@ -1,0 +1,10 @@
+[default]
+min_confidence = 0.8
+labels = ["common-mynas", "pigeons"]
+sound = "airhorn.mp3"
+volume = 150
+alert_cooldown_seconds = 10
+fps = 5
+telegram_alerts = true
+
+[user-override]
