@@ -13,7 +13,8 @@ from .utils import (
     export_ncnn,
     get_latest_trained_model,
     get_timestamp,
-    get_warden_settings
+    get_warden_settings,
+    resolve_redis_uri_components
 )
 from .db import (
     DB
@@ -26,6 +27,7 @@ __all__ = [
     "export_ncnn",
     "get_timestamp",
     "get_warden_settings",
+    "resolve_redis_uri_components",
     "BASE_PATH",
     "DATASET_PATH",
     "RUNS_PATH",

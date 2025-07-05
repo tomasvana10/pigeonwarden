@@ -7,6 +7,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from passlib.hash import bcrypt
 
+from .. import resolve_redis_uri_components
 from ..warden import Warden
 from .routes import init_routes
 
@@ -24,10 +25,11 @@ def _factory(dev: bool = False) -> Flask:
 
     if not dev:
         auth = HTTPBasicAuth()
+        components = resolve_redis_uri_components()
         limiter = Limiter(
             get_remote_address,
             app=_app,
-            storage_uri=f"redis://{os.getenv('DEVICE_IP') if int(os.getenv('USE_IP_FOR_REDIS_URI', 0)) else 'localhost'}:6379",
+            storage_uri=f"redis://{components["host"]}:{components["port"]}",
             default_limits=["5 per minute"],
         )
         limiter.init_app(_app)

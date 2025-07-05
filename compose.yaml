@@ -46,8 +46,6 @@ services:
     env_file:
       - .env.local
     environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
       - USE_IP_FOR_REDIS_URI=1
       - UDEV=1
       - LD_LIBRARY_PATH=/opt/vc/lib

@@ -16,6 +16,8 @@ flask_httpauth
 flask_limiter
 passlib
 bcrypt==4.0.1
+
+# authentication/settings
 redis
 
 # misc

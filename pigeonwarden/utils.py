@@ -4,6 +4,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, TypedDict
 
+from dotenv import load_dotenv
 from ultralytics import YOLO
 
 from .common import DETECT_PATH, WARDEN_SETTINGS_PATH
@@ -70,3 +71,12 @@ def get_warden_settings() -> WardenSettings:
     config.update(data.get("user-override", {}))
     
     return WardenSettings(**config) # type: ignore
+
+def resolve_redis_uri_components() -> dict[str, int | str]:
+    load_dotenv()
+    
+    components: dict[str, int | str] = {}
+    components["host"] = os.getenv("DEVICE_IP", "127.0.0.1") if int(os.getenv("USE_IP_FOR_REDIS_URI", 0)) else "localhost"
+    components["port"] = int(os.getenv("REDIS_PORT", 6379))
+    
+    return components
