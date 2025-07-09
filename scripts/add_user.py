@@ -1,5 +1,6 @@
-from dotenv import set_key, get_key
 import sys
+
+from dotenv import get_key, set_key
 from passlib.hash import bcrypt
 
 _env = ".env.local"

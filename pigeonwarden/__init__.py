@@ -7,16 +7,16 @@ from .common import (
     RUNS_PATH,
     WARDEN_SETTINGS_PATH,
 )
+from .db import DB
 from .utils import (
     Singleton,
     export_ncnn,
+    get_device_ip,
     get_latest_trained_model,
     get_timestamp,
     get_warden_settings,
     resolve_redis_uri_components,
-    get_device_ip
 )
-from .db import DB
 
 __all__ = [
     "Singleton",

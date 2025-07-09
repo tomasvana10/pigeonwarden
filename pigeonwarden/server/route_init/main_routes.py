@@ -1,7 +1,6 @@
 import time
 from typing import Iterator
 
-from werkzeug.wrappers.response import Response as WZResponse
 from flask import (
     Flask,
     Response,
@@ -12,7 +11,7 @@ from flask import (
     stream_with_context,
     url_for,
 )
-
+from werkzeug.wrappers.response import Response as WZResponse
 
 from ... import DB
 from ..warden import Warden

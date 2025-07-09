@@ -1,4 +1,5 @@
 import secrets
+
 from dotenv import set_key
 
 _env = ".env.local"

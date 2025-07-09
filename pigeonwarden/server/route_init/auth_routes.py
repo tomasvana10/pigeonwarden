@@ -1,8 +1,8 @@
-from passlib.hash import bcrypt
-from Flask import Flask, request, url_for, session, flash, redirect, render_template
-from wtforms import StringField, PasswordField
-from wtforms.validators import DataRequired
+from Flask import Flask, flash, redirect, render_template, request, session, url_for
 from flask_wtf import FlaskForm
+from passlib.hash import bcrypt
+from wtforms import PasswordField, StringField
+from wtforms.validators import DataRequired
 
 
 class LoginForm(FlaskForm):
