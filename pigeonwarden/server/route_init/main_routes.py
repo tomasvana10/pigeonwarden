@@ -49,6 +49,9 @@ def init_main_routes(app: Flask, warden: Warden) -> None:
     @app.route("/api/camera_stream")
     def camera_stream() -> Response:
         def generate() -> Iterator[bytes]:
+            while warden.current_frame is None:
+                time.sleep(0.1)
+                
             while True:
                 if warden.current_frame:
                     yield (
