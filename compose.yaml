@@ -11,6 +11,7 @@ services:
     devices:
       - /dev/vchiq:/dev/vchiq
       - /dev/video0:/dev/video0
+      - /dev/snd:/dev/snd
     volumes:
       - .:/app
       - /dev:/dev
@@ -36,6 +37,7 @@ services:
     devices:
       - /dev/vchiq:/dev/vchiq
       - /dev/video0:/dev/video0
+      - /dev/snd:/dev/snd
     depends_on:
       - redis
     volumes:
