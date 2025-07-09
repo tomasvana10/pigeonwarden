@@ -6,7 +6,7 @@ from .server import HOST, PORT, run_dev
 from .utils import export_ncnn
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="pigeonwarden options")
     subparsers = parser.add_subparsers(dest="command", required=True)
 

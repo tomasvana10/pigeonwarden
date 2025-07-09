@@ -1,5 +1,5 @@
 from threading import Lock
-from typing import TypedDict
+from typing import TypedDict, Optional
 
 import redis
 
@@ -27,12 +27,12 @@ class DB(metaclass=Singleton):
         )
         self._ensure_defaults()
 
-    def _ensure_defaults(self):
+    def _ensure_defaults(self) -> None:
         for key, default_val in self.DEFAULTS.items():
             if self.read(key) is None:
-                self.write(key, default_val)
+                self.write(key, default_val)  # type: ignore
 
-    def read(self, key: str, default=None) -> str | None:
+    def read(self, key: str, default=None) -> Optional[str]:
         with self._lock:
             return self._redis.get(key)
 
