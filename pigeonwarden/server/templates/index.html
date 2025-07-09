@@ -62,16 +62,25 @@
 
 <script>
   const wardenTogglerButton = document.getElementById("wardenTogglerButton");
-  wardenTogglerButton.onclick = async () => {
-    const inferring = await isInferring();
-    const endpoint = `/api/${inferring ? "inference_off" : "inference_on"}`;
-    const res = await fetch(endpoint).then(res => res.json());
 
-    wardenTogglerButton.innerText = `Warden ${res.state ? "ON" : "OFF"}`;
-    !res.modified &&
-      alert(
-        "State could not be modified. This is likely because another client completed this action just before you did."
-      );
+  wardenTogglerButton.onclick = async () => {
+    wardenTogglerButton.disabled = true;
+    try {
+      const inferring = await isInferring();
+      const endpoint = `/api/${inferring ? "inference_off" : "inference_on"}`;
+      const res = await fetch(endpoint).then(r => r.json());
+
+      wardenTogglerButton.innerText = `Warden ${res.state ? "ON" : "OFF"}`;
+      !res.modified &&
+        alert(
+          "State could not be modified. This is likely because another client completed this action just before you did."
+        );
+    } catch (err) {
+      console.error(err);
+      alert("Something went bung—check the console.");
+    } finally {
+      wardenTogglerButton.disabled = false;
+    }
   };
 
   /*
