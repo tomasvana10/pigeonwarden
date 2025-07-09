@@ -1,9 +1,11 @@
 import os
+import time
 import socket
 import tomllib
 from datetime import datetime
 from pathlib import Path
-from typing import Any, TypedDict
+from typing import Any, TypedDict, Callable
+from functools import wraps
 
 from dotenv import load_dotenv
 from ultralytics import YOLO
@@ -90,3 +92,18 @@ def get_device_ip() -> str:
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
         s.connect(("1.1.1.1", 80))
         return s.getsockname()[0]
+
+def cooldown(seconds: int, /, *, if_cooldown_return: Any = None) -> Callable:
+    last_called: dict[tuple[Callable, tuple[Any, ...]], float] = {}
+
+    def decorator(func: Callable) -> Callable:
+        @wraps(func)
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            now = time.time()
+            key = (func, args)
+            if key in last_called and now - last_called[key] < seconds:
+                return if_cooldown_return
+            last_called[key] = now
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator

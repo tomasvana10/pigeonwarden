@@ -11,7 +11,7 @@ from telegram import Bot
 from ultralytics import YOLO
 
 from .. import ASSETS_PATH, BASE_PATH, Singleton, get_timestamp, get_warden_settings
-from ..utils import get_latest_trained_model
+from ..utils import get_latest_trained_model, cooldown
 from .speaker import play_sound
 
 
@@ -94,14 +94,19 @@ class Warden(metaclass=Singleton):
             self.infer()
             time.sleep(self.internal_sleep_time)
 
-    def start_inference(self) -> None:
+    @cooldown(2, if_cooldown_return=False)
+    def toggle_inference(self, action: int) -> bool:
+        self._start_inference() if action else self._stop_inference()
+        return True
+    
+    def _start_inference(self) -> None:
         with self._lock:
             self.picam2.start()
             self._stop_flag = False
             self._inference_thread = Thread(target=self.infer_loop, daemon=True)
             self._inference_thread.start()
 
-    def stop_inference(self) -> None:
+    def _stop_inference(self) -> None:
         with self._lock:
             self.picam2.stop()
             self._stop_flag = True

@@ -76,18 +76,20 @@ def init_main_routes(app: Flask, warden: Warden) -> None:
     @app.route("/api/inference_on")
     def inference_on() -> Response:
         modified = False
+        cooldown = False
         if not warden.is_inferring():
-            warden.start_inference()
+            cooldown = not warden.toggle_inference(1)
             modified = True
-        return jsonify(modified=modified, state=1)
+        return jsonify(modified=modified, state=1, cooldown=cooldown)
 
     @app.route("/api/inference_off")
     def inference_off() -> Response:
         modified = False
+        cooldown = False
         if warden.is_inferring():
-            warden.stop_inference()
+            cooldown = not warden.toggle_inference(0)
             modified = True
-        return jsonify(modified=modified, state=0)
+        return jsonify(modified=modified, state=0, cooldown=cooldown)
 
     @app.route("/api/status")
     def status() -> Response:

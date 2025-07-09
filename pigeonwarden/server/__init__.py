@@ -51,7 +51,7 @@ def _factory(dev: bool = False) -> Flask:
 
     init_auth_routes(_app, users, dev)
     init_main_routes(_app, warden)
-    warden.start_inference()
+    warden.toggle_inference(1)
     return _app
 
 

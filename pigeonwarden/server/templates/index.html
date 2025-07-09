@@ -71,14 +71,17 @@
       const res = await fetch(endpoint).then(r => r.json());
 
       wardenTogglerButton.innerText = `Warden ${res.state ? "ON" : "OFF"}`;
-      !res.modified &&
+      if (!res.modified) {
         alert(
           "State could not be modified. This is likely because another client completed this action just before you did."
         );
+      } else if (res.cooldown) {
+        alert("This action is on cooldown. Please wait a couple seconds.");
+      }
     } catch (err) {
       console.error(err);
     } finally {
-      wardenTogglerButton.disabled = false;
+      setTimeout(() => (wardenTogglerButton.disabled = false), 2000);
     }
   };
 
