@@ -40,6 +40,7 @@ button {
   border: none;
   color: white;
   padding: 0.5rem 1rem;
+  width: 150px;
   font-weight: 600;
   cursor: pointer;
   user-select: none;
@@ -105,6 +106,10 @@ input[type="time"] {
 @media (max-width: 768px) {
   .sides {
     flex-direction: column;
+  }
+  
+  #wardenTogglerButton {
+    width: unset;
   }
 
   form > div {
