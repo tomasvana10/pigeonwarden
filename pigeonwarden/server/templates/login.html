@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Log in to pigeonwarden</title>
     <link
       rel="stylesheet"
@@ -10,18 +11,21 @@
       href="{{ url_for('static', filename='css/login.css') }}" />
   </head>
   <body>
-    <form method="POST">
-      {{ form.hidden_tag() }} {{ form.username.label }} {{
-      form.username(size=32) }}<br />
-      {{ form.password.label }} {{ form.password(size=32) }}<br />
-      <button type="submit">Login</button>
-    </form>
-    {% with messages = get_flashed_messages() %} {% if messages %}
-    <ul>
-      {% for msg in messages %}
-      <li>{{ msg }}</li>
-      {% endfor %}
-    </ul>
-    {% endif %} {% endwith %}
+    <div class="form-container">
+      <h2>Log in to pigeonwarden</h2>
+      <form method="POST">
+        {{ form.hidden_tag() }} {{ form.username.label }} {{
+        form.username(size=32) }}<br />
+        {{ form.password.label }} {{ form.password(size=32) }}<br />
+        {% with messages = get_flashed_messages() %} {% if messages %}
+      <ul>
+        {% for msg in messages %}
+        <li>{{ msg }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %} {% endwith %}
+        <button type="submit">Login</button>
+      </form>
+    </div>
   </body>
 </html>
