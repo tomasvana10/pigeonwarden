@@ -3,6 +3,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pigeon Warden</title>
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/shared.css') }}" />
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/index.css') }}" />
 </head>
 
 <style>
@@ -118,7 +124,10 @@
     const res = await fetch(endpoint).then(res => res.json());
 
     wardenTogglerButton.innerText = `Warden ${res.state ? "ON" : "OFF"}`;
-    !res.modified && alert("State could not be modified. This is likely because another client completed this action just before you did.");
+    !res.modified &&
+      alert(
+        "State could not be modified. This is likely because another client completed this action just before you did."
+      );
   };
 
   /*
