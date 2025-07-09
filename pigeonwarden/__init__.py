@@ -5,8 +5,7 @@ from .common import (
     DATASET_URL,
     DETECT_PATH,
     RUNS_PATH,
-    WARDEN_SETTINGS_PATH
-    
+    WARDEN_SETTINGS_PATH,
 )
 from .utils import (
     Singleton,
@@ -14,11 +13,9 @@ from .utils import (
     get_latest_trained_model,
     get_timestamp,
     get_warden_settings,
-    resolve_redis_uri_components
+    resolve_redis_uri_components,
 )
-from .db import (
-    DB
-)
+from .db import DB
 
 __all__ = [
     "Singleton",

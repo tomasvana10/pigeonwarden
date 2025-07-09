@@ -44,4 +44,4 @@ class DB(metaclass=Singleton):
 
     def read_all(self) -> DBTable:
         with self._lock:
-            return {key: self._redis.get(key) for key in self.DEFAULTS} # type: ignore
+            return {key: self._redis.get(key) for key in self.DEFAULTS}  # type: ignore

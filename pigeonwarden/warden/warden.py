@@ -19,7 +19,7 @@ class Warden(metaclass=Singleton):
     FRAME_ENCODING = ".jpg"
     ENV = ".env.local"
     AVERAGE_INFERENCE_TIME = 0.2
-    
+
     min_confidence: int
     labels: list[str]
     sound: str
@@ -53,8 +53,8 @@ class Warden(metaclass=Singleton):
 
         if self.telegram_alerts:
             load_dotenv(BASE_PATH / self.__class__.ENV)
-            self.bot = Bot(token=os.getenv("BOT_TOKEN")) # type: ignore
-            self.chat_id = int(os.getenv("CHAT_ID")) # type: ignore
+            self.bot = Bot(token=os.getenv("BOT_TOKEN"))  # type: ignore
+            self.chat_id = int(os.getenv("CHAT_ID"))  # type: ignore
 
         self._lock = Lock()
         self._stop_flag = False
