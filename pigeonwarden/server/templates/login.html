@@ -16,14 +16,15 @@
       <form method="POST">
         {{ form.hidden_tag() }} {{ form.username.label }} {{
         form.username(size=32) }}<br />
-        {{ form.password.label }} {{ form.password(size=32) }}<br />
+        {{ form.password.label }} {{ form.password(size=32) }}
         {% with messages = get_flashed_messages() %} {% if messages %}
-      <ul>
-        {% for msg in messages %}
-        <li>{{ msg }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %} {% endwith %}
+        <ul>
+          {% for msg in messages %}
+          <li>{{ msg }}</li>
+          {% endfor %}
+        </ul>
+        <br />
+        {% endif %} {% endwith %}
         <button type="submit">Login</button>
       </form>
     </div>
