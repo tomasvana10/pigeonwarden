@@ -13,7 +13,6 @@
   display: flex;
   gap: 2.5rem;
   width: 100%;
-  flex-wrap: wrap;
 }
 
 .left-side,
@@ -21,7 +20,6 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  flex: 1 1 300px;
   min-width: 0;
 }
 
@@ -66,8 +64,8 @@ form label {
 select[multiple] {
   height: 100px;
   min-width: 0;
-  width: 350px;
-  max-width: 95%;
+  width: 200px;
+  max-width: 90vw;
   padding: 0.25rem;
   border: 1px solid #ccc;
   border-radius: 0;
@@ -96,13 +94,10 @@ input[type="time"] {
   gap: 0.5rem;
   width: 100%;
   max-width: 1200px;
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
 .stream {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
   border: 1px solid #ddd;
   background: #000;
 }
