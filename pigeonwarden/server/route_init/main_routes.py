@@ -14,7 +14,7 @@ from flask import (
 from werkzeug.wrappers.response import Response as WZResponse
 
 from ... import DB
-from ..warden import Warden
+from ...warden import Warden
 
 
 def init_main_routes(app: Flask, warden: Warden) -> None:
