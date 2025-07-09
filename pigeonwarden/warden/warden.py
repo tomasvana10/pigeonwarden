@@ -98,18 +98,16 @@ class Warden(metaclass=Singleton):
     def toggle_inference(self, action: int) -> bool:
         self._start_inference() if action else self._stop_inference()
         return True
-    
+
     def _start_inference(self) -> None:
-        with self._lock:
-            self.picam2.start()
-            self._stop_flag = False
-            self._inference_thread = Thread(target=self.infer_loop, daemon=True)
-            self._inference_thread.start()
+        self.picam2.start()
+        self._stop_flag = False
+        self._inference_thread = Thread(target=self.infer_loop, daemon=True)
+        self._inference_thread.start()
 
     def _stop_inference(self) -> None:
-        with self._lock:
-            self.picam2.stop()
-            self._stop_flag = True
+        self.picam2.stop()
+        self._stop_flag = True
 
     def _configure_cam(self):
         self.picam2.preview_configuration.main.size = (1920, 1080)

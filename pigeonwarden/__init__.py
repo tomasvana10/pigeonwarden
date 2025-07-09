@@ -16,7 +16,7 @@ from .utils import (
     get_timestamp,
     get_warden_settings,
     resolve_redis_uri_components,
-    cooldown
+    cooldown,
 )
 
 __all__ = [

@@ -93,6 +93,7 @@ def get_device_ip() -> str:
         s.connect(("1.1.1.1", 80))
         return s.getsockname()[0]
 
+
 def cooldown(seconds: int, /, *, if_cooldown_return: Any = None) -> Callable:
     last_called: dict[tuple[Callable, tuple[Any, ...]], float] = {}
 
@@ -105,5 +106,7 @@ def cooldown(seconds: int, /, *, if_cooldown_return: Any = None) -> Callable:
                 return if_cooldown_return
             last_called[key] = now
             return func(*args, **kwargs)
+
         return wrapper
+
     return decorator

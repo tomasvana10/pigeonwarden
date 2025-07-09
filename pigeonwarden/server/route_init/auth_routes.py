@@ -6,6 +6,7 @@ from passlib.hash import bcrypt
 from wtforms import PasswordField, StringField
 from wtforms.validators import DataRequired
 
+
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired()])
     password = PasswordField("Password", validators=[DataRequired()])
@@ -17,7 +18,7 @@ def init_auth_routes(app: Flask, users: dict[str, str], dev: bool) -> None:
         if not dev and request.endpoint not in {"login", "static"}:
             if "user" not in session:
                 return redirect(url_for("login"))
-        
+
         return None
 
     @app.route("/login", methods=["GET", "POST"])
