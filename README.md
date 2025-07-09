@@ -13,8 +13,8 @@ Detect and scare pigeons
 3. Initialise a virtual environment and install the dependencies (`pip install -r requirements.txt`)
 4. Plug in a speaker and camera to your Raspberry Pi
 5. Create a Telegram bot and a chat for which pigeonwarden alerts will be sent to. Refer to [this website](https://core.telegram.org/bots/api) for guidance (or just ask AI).
-   > [!NOTE]
-   > Read [Configuring the warden](#extra-manually-configuring-the-warden) to see how Step 5 can be disregarded.
+> [!NOTE]
+> Read [Configuring the warden](#configuring-the-warden) to see how Step 5 can be disregarded.
 6. Create a `.env.local` file with the following contents:
 
 ```
