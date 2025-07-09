@@ -1,7 +1,7 @@
 import asyncio
 import os
 import time
-from threading import Lock, Thread
+from threading import RLock, Thread
 from typing import Optional
 
 import cv2
@@ -56,7 +56,7 @@ class Warden(metaclass=Singleton):
             self.bot = Bot(token=os.getenv("BOT_TOKEN"))  # type: ignore
             self.chat_id = int(os.getenv("CHAT_ID"))  # type: ignore
 
-        self._lock = Lock()
+        self._lock = RLock()
         self._stop_flag = False
         self._inference_thread: None | Thread = None
 
@@ -100,14 +100,16 @@ class Warden(metaclass=Singleton):
         return True
 
     def _start_inference(self) -> None:
-        self.picam2.start()
-        self._stop_flag = False
-        self._inference_thread = Thread(target=self.infer_loop, daemon=True)
-        self._inference_thread.start()
+        with self._lock:
+            self.picam2.start()
+            self._stop_flag = False
+            self._inference_thread = Thread(target=self.infer_loop, daemon=True)
+            self._inference_thread.start()
 
     def _stop_inference(self) -> None:
-        self.picam2.stop()
-        self._stop_flag = True
+        with self._lock:
+            self.picam2.stop()
+            self._stop_flag = True
 
     def _configure_cam(self):
         self.picam2.preview_configuration.main.size = (1920, 1080)
