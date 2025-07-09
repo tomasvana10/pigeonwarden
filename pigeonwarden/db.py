@@ -13,11 +13,9 @@ class DBTable(TypedDict):
 
 
 class DB(metaclass=Singleton):
-    DEFAULTS: DBTable = {
-        "cron_days": "0123456",
-        "cron_start_time": "07:00",
-        "cron_end_time": "20:00",
-    }
+    DEFAULTS = DBTable(
+        cron_days="0123456", cron_start_time="07:00", cron_end_time="20:00"
+    )
 
     def __init__(self):
         self._lock = Lock()

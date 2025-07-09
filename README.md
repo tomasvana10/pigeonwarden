@@ -12,22 +12,25 @@ Detect and scare pigeons
 2. Clone the repo
 3. Initialise a virtual environment and install the dependencies (`pip install -r requirements.txt`)
 4. Plug in a speaker and camera to your Raspberry Pi
-5. Create a Telegram bot and a chat for which pigeonwarden alerts will be sent to. Refer to [this website](https://core.telegram.org/bots/api) for guidance (or just ask AI). 
-> [!NOTE]
-> Read [Configuring the warden](#extra-manually-configuring-the-warden) to see how Step 5 can be disregarded.
+5. Create a Telegram bot and a chat for which pigeonwarden alerts will be sent to. Refer to [this website](https://core.telegram.org/bots/api) for guidance (or just ask AI).
+   > [!NOTE]
+   > Read [Configuring the warden](#extra-manually-configuring-the-warden) to see how Step 5 can be disregarded.
 6. Create a `.env.local` file with the following contents:
 
 ```
 BOT_TOKEN=your_telegram_bot_token (optional, see above)
 CHAT_ID=your_telegram_chat_id (optional, see above)
-
-USERNAME=John Smith
-USERPASS=super_secret_password (hash with scripts/hash.py)
-
-DEVICE_IP=eg. 192.168.1.105
 ```
 
-It is recommended that you reserve your Raspberry Pi's IP address on your LAN, as if it changes you will have to modify `.env.local`.
+7. Add a user and secret key to `.env.local` for authentication:
+
+```
+python scripts/add_user.py <username> <password>
+python scripts/add_secret.py
+```
+
+> [!NOTE]
+> You can add as many users as you wish.
 
 ### Initialising YOLO11 object detection model
 
@@ -42,7 +45,6 @@ It is recommended that you reserve your Raspberry Pi's IP address on your LAN, a
 3. Run the container: `docker compose up -d pigeonwarden-prod`. This will also run the `redis-server` service.
 
 ### Running directly on your system
-
 
 > [!WARNING]
 > This will require debugging and installation of various packages. If you run into errors, just copy and paste them into Google and StackOverflow will have the answers you need.

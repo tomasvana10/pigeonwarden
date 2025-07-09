@@ -14,6 +14,7 @@ from .utils import (
     get_timestamp,
     get_warden_settings,
     resolve_redis_uri_components,
+    get_device_ip
 )
 from .db import DB
 
@@ -25,6 +26,7 @@ __all__ = [
     "get_timestamp",
     "get_warden_settings",
     "resolve_redis_uri_components",
+    "get_device_ip",
     "BASE_PATH",
     "DATASET_PATH",
     "RUNS_PATH",

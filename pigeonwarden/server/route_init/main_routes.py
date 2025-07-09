@@ -1,5 +1,5 @@
 import time
-from typing import Iterator, Optional
+from typing import Iterator
 
 from werkzeug.wrappers.response import Response as WZResponse
 from flask import (
@@ -12,23 +12,14 @@ from flask import (
     stream_with_context,
     url_for,
 )
-from flask_httpauth import HTTPBasicAuth
 
-from .. import DB
+
+from ... import DB
 from ..warden import Warden
 
 
-def init_routes(
-    app: Flask, warden: Warden, auth: Optional[HTTPBasicAuth], dev: bool
-) -> None:
+def init_main_routes(app: Flask, warden: Warden) -> None:
     conf = DB()
-
-    if not dev:
-
-        @app.before_request
-        def main_auth() -> Optional[Response]:
-            assert auth is not None
-            return auth.login_required(lambda: None)()
 
     @app.route("/")
     def index() -> str:
@@ -45,8 +36,14 @@ def init_routes(
     @app.route("/submit_schedule", methods=["GET"])
     def submit_schedule() -> WZResponse:
         conf.write("cron_days", "".join(request.args.getlist("cron_days")))
-        conf.write("cron_start_time", request.args.get("cron_start_time", DB.DEFAULTS["cron_start_time"]))
-        conf.write("cron_end_time", request.args.get("cron_end_time", DB.DEFAULTS["cron_end_time"]))
+        conf.write(
+            "cron_start_time",
+            request.args.get("cron_start_time", DB.DEFAULTS["cron_start_time"]),
+        )
+        conf.write(
+            "cron_end_time",
+            request.args.get("cron_end_time", DB.DEFAULTS["cron_end_time"]),
+        )
 
         return redirect(url_for("index"))
 

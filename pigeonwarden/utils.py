@@ -1,5 +1,6 @@
 import os
 import tomllib
+import socket
 from datetime import datetime
 from pathlib import Path
 from typing import Any, TypedDict
@@ -78,10 +79,16 @@ def resolve_redis_uri_components() -> dict[str, int | str]:
 
     components: dict[str, int | str] = {}
     components["host"] = (
-        os.getenv("DEVICE_IP", "127.0.0.1")
+        get_device_ip()
         if int(os.getenv("USE_IP_FOR_REDIS_URI", 0))
         else "localhost"
     )
     components["port"] = int(os.getenv("REDIS_PORT", 6379))
 
     return components
+
+def get_device_ip() -> str:
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+        s.connect(("1.1.1.1", 80))
+        return s.getsockname()[0]
+    

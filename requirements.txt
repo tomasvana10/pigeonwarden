@@ -7,14 +7,15 @@ numpy==1.26.4
 # notifications
 python-telegram-bot
 
-# production hosting
+# development/production hosting
 flask
 waitress
 
 # authentication
-flask_httpauth
 flask_limiter
 passlib
+flask_wtf
+wtforms
 bcrypt==4.0.1
 
 # authentication/settings
