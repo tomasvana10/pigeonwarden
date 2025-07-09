@@ -3,7 +3,7 @@ from typing import TypedDict
 
 import redis
 
-from . import Singleton, resolve_redis_uri_components
+from .utils import Singleton, resolve_redis_uri_components
 
 
 class DBTable(TypedDict):
