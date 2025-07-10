@@ -2,7 +2,7 @@ import os
 import shutil
 from zipfile import ZipFile
 
-import requests
+import requests  # type: ignore
 
 from .. import DATASET_PATH, DATASET_URL
 
