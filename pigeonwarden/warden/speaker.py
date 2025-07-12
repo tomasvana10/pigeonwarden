@@ -1,13 +1,15 @@
 import time
+import os
 from threading import Event, Thread
 
 import vlc
 
 from .. import ASSETS_PATH
 
+DEFAULT_ALSA_AUDIO_DEVICE = "2,0"
 
 def _play_sound(soundfile: str, vol: int) -> None:
-    instance = vlc.Instance("--aout=alsa")
+    instance = vlc.Instance(f"--aout=alsa --alsa-audio-device=hw:{os.getenv('ALSA_AUDIO_DEVICE', DEFAULT_ALSA_AUDIO_DEVICE)}")
     media = instance.media_new(ASSETS_PATH / "sound" / soundfile)
     player = instance.media_player_new()
     player.set_media(media)
